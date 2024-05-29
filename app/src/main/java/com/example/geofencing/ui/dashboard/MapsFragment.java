@@ -1,6 +1,4 @@
-package com.example.geofencing.ui.home;
-
-import static android.content.Context.ACTIVITY_SERVICE;
+package com.example.geofencing.ui.dashboard;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,9 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +23,10 @@ import com.example.geofencing.R;
 import com.example.geofencing.databinding.FragmentMapsBinding;
 import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.KmlUtil;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.List;

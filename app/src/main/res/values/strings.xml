@@ -4,6 +4,7 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_user">User</string>
+    <string name="title_child_management">Child Management</string>
     <string name="google_map_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDCM0gMyC9oVbrpMTRyUvC06Iz79BUKrkw</string>
 </resources>
