@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentHomeBinding;
+import com.example.geofencing.dialog.ChildCodeDialog;
 import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.model.Child;
 
@@ -49,7 +50,8 @@ public class HomeFragment extends Fragment {
         adapter.setOnItemClickListener(new ChildAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int i) {
-                Toast.makeText(getContext(), "Item "+childList.get(i).getName()+" clicked", Toast.LENGTH_SHORT).show();
+                ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i).getName());
+                childCodeDialog.show(getParentFragmentManager(), "child_code");
             }
         });
 
