@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.MainActivity;
+import com.example.geofencing.MainActivity2;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityLoginBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(LoginActivity.this, "Already logged in",
                     Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity2.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
@@ -128,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.LENGTH_SHORT).show();
 
         // Move to Main Activity
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        startActivity(new Intent(LoginActivity.this, MainActivity2.class));
         finish();
     }
 }

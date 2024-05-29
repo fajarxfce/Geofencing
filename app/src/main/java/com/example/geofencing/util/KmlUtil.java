@@ -1,4 +1,4 @@
-package com.example.geofencing;
+package com.example.geofencing.util;
 
 import android.content.Context;
 
