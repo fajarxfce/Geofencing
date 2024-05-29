@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentHomeBinding;
+import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.model.Child;
 
 import java.util.ArrayList;
@@ -52,12 +53,20 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        adapter.setOnItemLongClickListener(new ChildAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int i) {
+                DeleteChildDialog deleteChildDialog = new DeleteChildDialog(childList.get(i).getId(), childList.get(i).getName());
+                deleteChildDialog.show(getParentFragmentManager(), "delete_child");
+            }
+        });
+
     }
 
     private List<Child> createList() {
         List<Child> childList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            childList.add(new Child("Name " + i, "email"+i+"@gmail.com", "avatar"+i+".png"));
+            childList.add(new Child(i, "Name " + i, "email"+i+"@gmail.com", "avatar"+i+".png"));
         }
 
         return childList;

@@ -17,14 +17,23 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
 
     List<Child> childList = new ArrayList<>();
     OnItemClickListener listener;
+    OnItemLongClickListener longClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int i);
     }
 
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View view, int i);
+    }
+
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     public ChildAdapter(List<Child> childList) {
@@ -42,12 +51,13 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ChildAdapter.ViewHolder holder, int position) {
         holder.binding.tvName.setText(childList.get(position).getName());
         holder.binding.tvEmail.setText(childList.get(position).getEmail());
-        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(v, position);
-            }
+        holder.binding.getRoot().setOnClickListener(v -> listener.onItemClick(v, position));
+        holder.binding.getRoot().setOnLongClickListener(v -> {
+            longClickListener.onItemLongClick(v, position);
+            return true;
         });
+
+
     }
 
     @Override

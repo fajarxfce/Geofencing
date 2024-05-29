@@ -1,14 +1,25 @@
 package com.example.geofencing.model;
 
 public class Child {
+
+    private int id;
     private String name;
     private String email;
     private String avatar;
 
-    public Child(String name, String email, String avatar) {
+    public Child(int id, String name, String email, String avatar) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.avatar = avatar;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
