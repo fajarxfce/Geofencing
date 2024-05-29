@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.geofencing.Config;
 import com.example.geofencing.MainActivity;
 import com.example.geofencing.R;
+import com.example.geofencing.databinding.ActivityLoginBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -29,27 +30,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText fPassword;
     private Button bSignin;
     private Button bSignup;
+    ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Create instance firebase
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         Auth = FirebaseAuth.getInstance();
 
 
-        // Set component
-        fEmail = findViewById(R.id.login_email);
-        fPassword = findViewById(R.id.login_password);
-        bSignin = findViewById(R.id.login_submit_btn);
-        bSignup = findViewById(R.id.login_signup_btn);
-
-
         // Btn on click action
-        bSignup.setOnClickListener(this);
-        bSignin.setOnClickListener(this);
+        binding.loginSignupBtn.setOnClickListener(this);
+        binding.loginSubmitBtn.setOnClickListener(this);
 
         // Check if user is logged in
         if (Auth.getCurrentUser() != null) {
@@ -77,18 +73,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Text Input Vallidation
     private boolean validateForm() {
         boolean result = true;
-        if (TextUtils.isEmpty(fEmail.getText().toString())) {
-            fEmail.setError("Required");
+        if (TextUtils.isEmpty(binding.loginEmail.getText().toString())) {
+            binding.loginEmail.setError("Required");
             result = false;
         } else {
-            fEmail.setError(null);
+            binding.loginEmail.setError(null);
         }
 
-        if (TextUtils.isEmpty(fPassword.getText().toString())) {
-            fPassword.setError("Required");
+        if (TextUtils.isEmpty(binding.loginPassword.getText().toString())) {
+            binding.loginPassword.setError("Required");
             result = false;
         } else {
-            fPassword.setError(null);
+            binding.loginPassword.setError(null);
         }
 
         return result;
@@ -99,8 +95,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn() {
         if (!validateForm()) return;
 
-        String email = fEmail.getText().toString();
-        String password = fPassword.getText().toString();
+        String email = binding.loginEmail.getText().toString();
+        String password = binding.loginPassword.getText().toString();
 
         Auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {

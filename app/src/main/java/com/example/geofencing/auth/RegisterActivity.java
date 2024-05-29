@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.geofencing.databinding.ActivityRegisterBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -24,11 +26,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText fPassword;
     private Button bBack;
     private Button bSignup;
+    ActivityRegisterBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Create instance firebase
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
@@ -41,8 +45,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         bSignup = findViewById(R.id.signup_btn);
 
         // Btn on click action
-        bBack.setOnClickListener(this);
-        bSignup.setOnClickListener(this);
+        binding.signupBackBtn.setOnClickListener(this);
+        binding.signupBtn.setOnClickListener(this);
     }
 
     @Override
@@ -65,28 +69,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     // Text Input Vallidation
     private boolean validateForm() {
         boolean result = true;
-        if (TextUtils.isEmpty(fEmail.getText().toString())) {
-            fEmail.setError("Required");
+        if (TextUtils.isEmpty(binding.signupEmail.getText().toString())) {
+            binding.signupEmail.setError("Required");
             result = false;
         } else {
-            fEmail.setError(null);
+            binding.signupEmail.setError(null);
         }
 
-        if (TextUtils.isEmpty(fPassword.getText().toString())) {
-            fPassword.setError("Required");
+        if (TextUtils.isEmpty(binding.signupPassword.getText().toString())) {
+            binding.signupPassword.setError("Required");
             result = false;
         } else {
-            fPassword.setError(null);
+            binding.signupPassword.setError(null);
         }
 
         // Min 6
-        if(fPassword.getText().toString().length() < 6) {
+        if(binding.signupPassword.getText().toString().length() < 6) {
             Toast.makeText(RegisterActivity.this, "Password min 6 character",
                     Toast.LENGTH_SHORT).show();
         }
 
         // Must contain @
-        if(!fEmail.getText().toString().contains("@")) {
+        if(!binding.signupEmail.getText().toString().contains("@")) {
             Toast.makeText(RegisterActivity.this, "Email does not comply with the conditions",
                     Toast.LENGTH_SHORT).show();
         }
@@ -98,8 +102,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void signUp() {
         if (!validateForm()) return;
 
-        String email = fEmail.getText().toString();
-        String password = fPassword.getText().toString();
+        String email = binding.signupEmail.getText().toString();
+        String password = binding.signupPassword.getText().toString();
 
         Auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {

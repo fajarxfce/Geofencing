@@ -7,18 +7,42 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.geofencing.auth.LoginActivity;
+import com.example.geofencing.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
+    ActivityMainBinding binding;
     private Button bLogout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        bLogout = findViewById(R.id.btn_logout);
-        bLogout.setOnClickListener(v -> {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getIdToken() instead.
+            String uid = user.getUid();
+            binding.name.setText(user.getEmail());
+
+        }
+
+
+
+
+        binding.btnLogout.setOnClickListener(v -> {
             // Logout
             FirebaseAuth.getInstance().signOut();
 

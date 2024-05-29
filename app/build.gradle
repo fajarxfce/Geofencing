@@ -22,6 +22,9 @@ android {
     }
     namespace 'com.example.geofencing'
 
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
