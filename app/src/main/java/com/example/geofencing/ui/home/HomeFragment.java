@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,11 +40,18 @@ public class HomeFragment extends Fragment {
 
     private void setupRecyclerView() {
 
-
-
+        List<Child> childList = createList();
+        ChildAdapter adapter = new ChildAdapter(childList);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
-        binding.recyclerView.setAdapter(new ChildAdapter(createList()));
+        binding.recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new ChildAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int i) {
+                Toast.makeText(getContext(), "Item "+childList.get(i).getName()+" clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private List<Child> createList() {

@@ -16,6 +16,16 @@ import java.util.List;
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
 
     List<Child> childList = new ArrayList<>();
+    OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int i);
+    }
+
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public ChildAdapter(List<Child> childList) {
         this.childList = childList;
@@ -32,6 +42,12 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ChildAdapter.ViewHolder holder, int position) {
         holder.binding.tvName.setText(childList.get(position).getName());
         holder.binding.tvEmail.setText(childList.get(position).getEmail());
+        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, position);
+            }
+        });
     }
 
     @Override
