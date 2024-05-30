@@ -87,12 +87,12 @@ public class MapsFragment extends Fragment {
     }
 
     private void startLocationService() {
-//        if (!isLocationServiceRunning()) {
+        if (!isLocationServiceRunning()) {
             Intent intent = new Intent(getActivity(), LocationService.class);
             intent.setAction(Contstants.ACTION_START_LOCATION_SERVICE);
             requireActivity().startService(intent);
             Toast.makeText(getContext(), "Location service started", Toast.LENGTH_SHORT).show();
-//        }
+        }
     }
 
     private void stopLocationService() {

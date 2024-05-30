@@ -16,6 +16,8 @@ import com.example.geofencing.MainActivity2;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityLoginBinding;
 import com.example.geofencing.dialog.EnterPairCodeDialog;
+import com.example.geofencing.ui.child.ChildActivity;
+import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button bSignin;
     private Button bSignup;
     ActivityLoginBinding binding;
+    SharedPreferencesUtil sf = new SharedPreferencesUtil(LoginActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         binding.loginSignupBtn.setOnClickListener(this);
         binding.loginSubmitBtn.setOnClickListener(this);
 
+
+        if (sf.getPref("pair_code", LoginActivity.this) != null) {
+            Intent intent = new Intent(LoginActivity.this, ChildActivity.class);
+            startActivity(intent);
+            finish();
+        }
         // Check if user is logged in
         if (Auth.getCurrentUser() != null) {
             Toast.makeText(LoginActivity.this, "Already logged in",

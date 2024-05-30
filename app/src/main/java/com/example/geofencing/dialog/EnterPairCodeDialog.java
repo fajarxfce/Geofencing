@@ -1,6 +1,7 @@
 package com.example.geofencing.dialog;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.geofencing.R;
+import com.example.geofencing.auth.LoginActivity;
 import com.example.geofencing.databinding.DialogEnterPairCodeBinding;
+import com.example.geofencing.ui.child.ChildActivity;
+import com.example.geofencing.util.SharedPreferencesUtil;
 
 public class EnterPairCodeDialog extends DialogFragment {
 
     DialogEnterPairCodeBinding binding;
+
+    SharedPreferencesUtil sf;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,11 +31,23 @@ public class EnterPairCodeDialog extends DialogFragment {
         binding = DialogEnterPairCodeBinding.inflate(inflater, container, false);
 
         binding.btnSubmit.setOnClickListener(v -> { validatePairCode(); });
+        sf = new SharedPreferencesUtil(requireContext());
 
         return binding.getRoot();
     }
 
     private void validatePairCode() {
+        String pairCode = binding.txtPairCode.getText().toString().trim();
+        if (pairCode.isEmpty()) {
+            binding.txtPairCode.setError("Pair code is required");
+            return;
+        }
+
+        sf.setPref("pair_code", pairCode, requireContext());
+
+        dismiss();
+        Intent intent = new Intent(getActivity(), ChildActivity.class);
+        startActivity(intent);
 
     }
 
