@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment {
                     i++;
 
                     Log.d("child", clidSnapshot.getKey());
-                    childList.add(new Child(i, clidSnapshot.child("name").getValue(String.class)));
+                    childList.add(new Child(i, clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
                 }
 
                 ChildAdapter adapter = new ChildAdapter(childList);

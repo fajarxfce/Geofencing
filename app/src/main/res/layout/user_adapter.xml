@@ -23,10 +23,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_email"
+        android:id="@+id/tv_pairkey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="example@domain.com"
+        android:text="123456"
         app:layout_constraintStart_toEndOf="@+id/iv_avatar"
         app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
