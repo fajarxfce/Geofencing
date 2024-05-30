@@ -83,20 +83,14 @@ public class HomeFragment extends Fragment {
                 binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 binding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
-                adapter.setOnItemClickListener(new ChildAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int i) {
-                        ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i).getName());
-                        childCodeDialog.show(getParentFragmentManager(), "child_code");
-                    }
+                adapter.setOnItemClickListener((view, i1) -> {
+                    ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
+                    childCodeDialog.show(getParentFragmentManager(), "child_code");
                 });
 
-                adapter.setOnItemLongClickListener(new ChildAdapter.OnItemLongClickListener() {
-                    @Override
-                    public void onItemLongClick(View view, int i) {
-                        DeleteChildDialog deleteChildDialog = new DeleteChildDialog(childList.get(i).getId(), childList.get(i).getName());
-                        deleteChildDialog.show(getParentFragmentManager(), "delete_child");
-                    }
+                adapter.setOnItemLongClickListener((view, i12) -> {
+                    DeleteChildDialog deleteChildDialog = new DeleteChildDialog(childList.get(i12).getId(), childList.get(i12).getName());
+                    deleteChildDialog.show(getParentFragmentManager(), "delete_child");
                 });
             }
 
