@@ -50,7 +50,6 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ChildAdapter.ViewHolder holder, int position) {
         holder.binding.tvName.setText(childList.get(position).getName());
-        holder.binding.tvEmail.setText(childList.get(position).getEmail());
         holder.binding.getRoot().setOnClickListener(v -> listener.onItemClick(v, position));
         holder.binding.getRoot().setOnLongClickListener(v -> {
             longClickListener.onItemLongClick(v, position);

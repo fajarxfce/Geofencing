@@ -4,14 +4,10 @@ public class Child {
 
     private int id;
     private String name;
-    private String email;
-    private String avatar;
 
-    public Child(int id, String name, String email, String avatar) {
+    public Child(int id, String name) {
         this.id = id;
         this.name = name;
-        this.email = email;
-        this.avatar = avatar;
     }
 
     public int getId() {
@@ -28,21 +24,5 @@ public class Child {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 }

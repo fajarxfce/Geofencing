@@ -62,7 +62,8 @@ public class DBHelper {
         ChildFirebase child = new ChildFirebase(childParentId, childName, childName);
 
         DB.child("users")
-                .child(childName)
+                .child(childParentId)
+                .child("childs")
                 .child(childPairKey)
                 .setValue(child);
 
