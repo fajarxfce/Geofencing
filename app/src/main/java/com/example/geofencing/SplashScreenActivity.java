@@ -6,12 +6,21 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.example.geofencing.auth.LoginActivity;
+import com.example.geofencing.databinding.ActivitySpashScreenBinding;
 
 public class SplashScreenActivity extends AppCompatActivity {
+
+    ActivitySpashScreenBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spash_screen);
+        binding = ActivitySpashScreenBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         new Handler().postDelayed(() -> {
             // Intent is used to switch from one activity to another.

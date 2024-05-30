@@ -15,6 +15,7 @@ import com.example.geofencing.MainActivity;
 import com.example.geofencing.MainActivity2;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityLoginBinding;
+import com.example.geofencing.dialog.EnterPairCodeDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -58,6 +59,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(intent);
             finish();
         }
+
+        binding.btnPairCode.setOnClickListener(v -> createDialog());
     }
 
     // On click action override
@@ -69,6 +72,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if (i == R.id.login_signup_btn) {
             signUp();
         }
+    }
+
+    private void createDialog() {
+        EnterPairCodeDialog dialog = new EnterPairCodeDialog();
+        dialog.show(getSupportFragmentManager(), "EnterPairCodeDialog");
     }
 
     // Text Input Vallidation
