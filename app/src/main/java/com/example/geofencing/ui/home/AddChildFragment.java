@@ -23,7 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AddChildFragment extends Fragment {
 
-    String uid;
     FragmentAddChildBinding binding;
 
     private DatabaseReference DB;
@@ -32,7 +31,6 @@ public class AddChildFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        this.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         binding = FragmentAddChildBinding.inflate(inflater, container, false);
 
         // Create instance firebase

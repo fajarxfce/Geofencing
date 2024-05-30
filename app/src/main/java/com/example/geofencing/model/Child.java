@@ -2,21 +2,21 @@ package com.example.geofencing.model;
 
 public class Child {
 
-    private int id;
+    private String id;
     private String name;
     private String pairkey;
 
-    public Child(int id, String name, String pairkey) {
+    public Child(String id, String name, String pairkey) {
         this.id = id;
         this.name = name;
         this.pairkey = pairkey;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

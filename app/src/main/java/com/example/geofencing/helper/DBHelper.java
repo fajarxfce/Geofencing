@@ -71,4 +71,16 @@ public class DBHelper {
                 .child(childPairKey)
                 .setValue(child);
     }
+
+    public static void deleteChild(DatabaseReference DB, String parentId, String id) {
+        DB.child("users")
+                .child(parentId)
+                .child("childs")
+                .child(id)
+                .removeValue();
+
+        DB.child("childs")
+                .child(id)
+                .removeValue();
+    }
 }
