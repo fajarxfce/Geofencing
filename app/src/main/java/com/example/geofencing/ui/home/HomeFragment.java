@@ -9,9 +9,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.geofencing.R;
 import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentHomeBinding;
 import com.example.geofencing.dialog.ChildCodeDialog;
@@ -38,6 +40,16 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
+        setupEventListener();
+    }
+
+    private void setupEventListener() {
+        binding.fabAddChild.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_addChildFragment);
+            }
+        });
     }
 
     private void setupRecyclerView() {

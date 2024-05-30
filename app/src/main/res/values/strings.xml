@@ -7,4 +7,9 @@
     <string name="title_user">User</string>
     <string name="title_child_management">Child Management</string>
     <string name="google_map_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDCM0gMyC9oVbrpMTRyUvC06Iz79BUKrkw</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_child">Add Child</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
 </resources>
