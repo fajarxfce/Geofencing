@@ -39,6 +39,8 @@ public class LocationService extends Service {
                 LatLng currentLocation = new LatLng(latitude, longitude);
                 KmlUtil kmlUtil = new KmlUtil();
 
+                saveLocationToFirebase(latitude, longitude);
+
                 boolean inside = PolyUtil.containsLocation(currentLocation, kmlUtil.parseKMLFile(R.raw.contoh, getApplicationContext()), true);
                 if (inside) {
                     // The current location is inside the polygon
@@ -55,6 +57,10 @@ public class LocationService extends Service {
 
         }
     };
+
+    private void saveLocationToFirebase(double latitude, double longitude) {
+
+    }
 
     @Nullable
     @Override
@@ -85,8 +91,8 @@ public class LocationService extends Service {
             }
 
             LocationRequest locationRequest = new LocationRequest();
-            locationRequest.setInterval(4000);
-            locationRequest.setFastestInterval(2000);
+            locationRequest.setInterval(10000);
+            locationRequest.setFastestInterval(20000);
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
             LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, null);

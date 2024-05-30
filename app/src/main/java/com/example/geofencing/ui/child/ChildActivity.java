@@ -25,6 +25,7 @@ import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.KmlUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolygonOptions;
 
@@ -68,7 +69,6 @@ public class ChildActivity extends AppCompatActivity {
             enableUserLocation();
 
 
-
         }
     };
 
@@ -78,13 +78,20 @@ public class ChildActivity extends AppCompatActivity {
         binding = ActivityChildBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(callback);
+        }
+
         if (ContextCompat.checkSelfPermission(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     ChildActivity.this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     Contstants.REQUEST_CODE_LOCATION_PERMISSION
             );
-        }else {
+        } else {
             startLocationService();
         }
 
@@ -94,8 +101,8 @@ public class ChildActivity extends AppCompatActivity {
 
         PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(latLngList);
-        polygonOptions.strokeColor(Color.argb(255, 255, 0,0));
-        polygonOptions.fillColor(Color.argb(64, 255, 0,0));
+        polygonOptions.strokeColor(Color.argb(255, 255, 0, 0));
+        polygonOptions.fillColor(Color.argb(64, 255, 0, 0));
         polygonOptions.strokeWidth(4);
         mMap.addPolygon(polygonOptions);
     }
@@ -116,10 +123,12 @@ public class ChildActivity extends AppCompatActivity {
 
     private void startLocationService() {
         if (!isLocationServiceRunning()) {
-        Intent intent = new Intent(ChildActivity.this, LocationService.class);
-        intent.setAction(Contstants.ACTION_START_LOCATION_SERVICE);
-        startService(intent);
-        Toast.makeText(ChildActivity.this, "Location service started", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ChildActivity.this, LocationService.class);
+            intent.setAction(Contstants.ACTION_START_LOCATION_SERVICE);
+            startService(intent);
+            Toast.makeText(ChildActivity.this, "Location service started", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ChildActivity.this, "Location service is already running", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -163,9 +172,9 @@ public class ChildActivity extends AppCompatActivity {
             //Ask for permission
             if (ActivityCompat.shouldShowRequestPermissionRationale(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                 //We need to show user a dialog for displaying why the permission is needed and then ask for the permission...
-                ActivityCompat.requestPermissions(ChildActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+                ActivityCompat.requestPermissions(ChildActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(ChildActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+                ActivityCompat.requestPermissions(ChildActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
             }
         }
     }
