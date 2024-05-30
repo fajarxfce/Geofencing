@@ -67,6 +67,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="Enter Pairing Code" />
+        android:text="Login As A Child" />
 
 </LinearLayout>

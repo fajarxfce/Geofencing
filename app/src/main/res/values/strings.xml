@@ -2,7 +2,7 @@
     <string name="app_name">Geofencing</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main2">MainActivity2</string>
-    <string name="title_home">Home</string>
+    <string name="title_child">Child</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_user">User</string>
     <string name="title_child_management">Child Management</string>

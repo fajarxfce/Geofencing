@@ -25,16 +25,8 @@ public class SharedPreferencesUtil {
         spEditor.apply();
     }
 
-    public String  getPref(String key, Context context){
+    public String getPref(String key, Context context){
         sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getString(key,null);
     }
-
-//    public Boolean isLogin(String key){
-//        if (getPref(key,context) != null){
-//            return true;
-//        }else {
-//            return false;
-//        }
-//    }
 }
