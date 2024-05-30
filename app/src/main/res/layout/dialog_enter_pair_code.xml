@@ -20,8 +20,8 @@
             android:id="@+id/txt_pair_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="textPassword" />
+            android:imeOptions="actionDone"
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
