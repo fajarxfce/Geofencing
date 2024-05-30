@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.geofencing.MainActivity;
 import com.example.geofencing.auth.LoginActivity;
 import com.example.geofencing.databinding.FragmentUserBinding;
 import com.google.firebase.auth.FirebaseAuth;
