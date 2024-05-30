@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,12 +37,12 @@ public class AddChildFragment extends Fragment {
         binding.btnAddChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addChild();
+                addChild(v);
             }
         });
     }
 
-    private void addChild() {
-
+    private void addChild(View v) {
+        Navigation.findNavController(v).navigate(R.id.action_addChildFragment_to_navigation_home);
     }
 }

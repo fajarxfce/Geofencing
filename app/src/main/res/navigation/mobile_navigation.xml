@@ -29,5 +29,9 @@
         android:id="@+id/addChildFragment"
         android:name="com.example.geofencing.ui.home.AddChildFragment"
         android:label="@string/add_child"
-        tools:layout="@layout/fragment_add_child" />
+        tools:layout="@layout/fragment_add_child" >
+        <action
+            android:id="@+id/action_addChildFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>
