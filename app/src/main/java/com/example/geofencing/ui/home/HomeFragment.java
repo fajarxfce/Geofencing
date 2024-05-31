@@ -79,8 +79,8 @@ public class HomeFragment extends Fragment {
                 }
 
                 ChildAdapter adapter = new ChildAdapter(childList);
-                binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                binding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
+                binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
                     ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
