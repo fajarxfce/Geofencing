@@ -7,12 +7,14 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +29,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragment extends Fragment {
@@ -38,6 +48,8 @@ public class MapsFragment extends Fragment {
     FragmentMapsBinding binding;
     private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
+    private List<LatLng> points = new ArrayList<>();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -56,7 +68,7 @@ public class MapsFragment extends Fragment {
 //            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-
+            DatabaseReference pointsRef = database.getReference("points");
             mMap = googleMap;
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
@@ -64,13 +76,51 @@ public class MapsFragment extends Fragment {
 
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
             addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, getContext()));
+            mMap.setOnMapClickListener(latLng -> {
+                binding.fabDelete.setVisibility(View.VISIBLE);
+                binding.ibSave.setVisibility(View.VISIBLE);
+                points.add(latLng);
+                drawPolygon();
+            });
+
+            binding.fabDelete.setOnClickListener(v -> {
+                if (points.size() <= 1) {
+                    points.clear();
+                    mMap.clear();
+                    binding.fabDelete.setVisibility(View.GONE);
+                    binding.ibSave.setVisibility(View.GONE);
+                } else {
+                    points.remove(points.size() - 1);
+                    drawPolygon();
+                }
+            });
+
+            binding.ibSave.setOnClickListener(v -> {
+
+
+            });
 
             enableUserLocation();
 
-
-
         }
     };
+
+    private void drawPolygon(){
+        mMap.clear();
+        PolygonOptions polygon = new PolygonOptions();
+        for (LatLng point : points) {
+//            mMap.addMarker(new MarkerOptions().position(point));
+            polygon.add(point);
+        }
+        binding.squareFeet.setText("Area: " + SphericalUtil.computeArea(points));
+        polygon.fillColor(R.color.purple_700);
+        mMap.addPolygon(polygon);
+        for (int i = 0; i < points.size(); i++) {
+            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
+        }
+    }
+
+
 
     private boolean isLocationServiceRunning() {
         ActivityManager activityManager = (ActivityManager) requireActivity().getSystemService(Context.ACTIVITY_SERVICE);
@@ -185,4 +235,9 @@ public class MapsFragment extends Fragment {
             stopLocationService();
         });
     }
+
+//    @Override
+//    public void onMapLongClick(LatLng latLng) {
+//
+//    }
 }
