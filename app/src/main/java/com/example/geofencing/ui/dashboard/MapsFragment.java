@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.FragmentMapsBinding;
+import com.example.geofencing.dialog.EnterAreaNameDialog;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.KmlUtil;
@@ -104,15 +106,21 @@ public class MapsFragment extends Fragment {
             });
 
             binding.ibSave.setOnClickListener(v -> {
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+//                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//                DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+//
+//                DBHelper.saveArea(DB, uid, "area" + new Random().nextInt(9999), points);
+//
+//                Toast.makeText(getActivity(), "Area saved", Toast.LENGTH_SHORT).show();
 
-                DBHelper.saveArea(DB, uid, "area" + new Random().nextInt(9999), points);
-
-                Toast.makeText(getActivity(), "Area saved", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("points", (ArrayList<? extends Parcelable>) points);
+                EnterAreaNameDialog dialog = new EnterAreaNameDialog(v);
+                dialog.setArguments(bundle);
+                dialog.show(getParentFragmentManager(), "EnterAreaNameDialog");
 
                 // Move to List Area fragment
-                Navigation.findNavController(v).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
+
             });
 
             enableUserLocation();
