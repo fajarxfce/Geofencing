@@ -60,6 +60,12 @@ public class AddChildFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String name = binding.txtName.getText().toString();
 
+        if(name.isEmpty()) {
+            Toast.makeText(getActivity(), "Enter name",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Create childs
         DBHelper.saveChild(DB, user.getUid(), name);
 
