@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.FragmentMapsBinding;
+import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.KmlUtil;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -34,12 +41,14 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MapsFragment extends Fragment {
 
@@ -49,7 +58,13 @@ public class MapsFragment extends Fragment {
     private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private List<LatLng> points = new ArrayList<>();
+
+    private FusedLocationProviderClient fusedLocationProviderClient;
+
+    private Location currentLocation;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    private DatabaseReference DB;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -64,18 +79,11 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-//            LatLng sydney = new LatLng(-34, 151);
-//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
             DatabaseReference pointsRef = database.getReference("points");
             mMap = googleMap;
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-            KmlUtil kmlUtil = new KmlUtil();
-
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-            addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, getContext()));
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mMap.setOnMapClickListener(latLng -> {
                 binding.fabDelete.setVisibility(View.VISIBLE);
                 binding.ibSave.setVisibility(View.VISIBLE);
@@ -96,12 +104,18 @@ public class MapsFragment extends Fragment {
             });
 
             binding.ibSave.setOnClickListener(v -> {
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
 
+                DBHelper.saveArea(DB, uid, "area" + new Random().nextInt(9999), points);
 
+                Toast.makeText(getActivity(), "Area saved", Toast.LENGTH_SHORT).show();
+
+                // Move to List Area fragment
+                Navigation.findNavController(v).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
             });
 
             enableUserLocation();
-
         }
     };
 
@@ -109,7 +123,7 @@ public class MapsFragment extends Fragment {
         mMap.clear();
         PolygonOptions polygon = new PolygonOptions();
         for (LatLng point : points) {
-//            mMap.addMarker(new MarkerOptions().position(point));
+            mMap.addMarker(new MarkerOptions().position(point));
             polygon.add(point);
         }
         binding.squareFeet.setText("Area: " + SphericalUtil.computeArea(points));
@@ -200,21 +214,15 @@ public class MapsFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void addPolygon(List<LatLng> latLngList) {
-
-        PolygonOptions polygonOptions = new PolygonOptions();
-        polygonOptions.addAll(latLngList);
-        polygonOptions.strokeColor(Color.argb(255, 255, 0,0));
-        polygonOptions.fillColor(Color.argb(64, 255, 0,0));
-        polygonOptions.strokeWidth(4);
-        mMap.addPolygon(polygonOptions);
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        getLastLocation();
+
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
@@ -234,6 +242,20 @@ public class MapsFragment extends Fragment {
         binding.btnStropLocationUpdate.setOnClickListener(v -> {
             stopLocationService();
         });
+    }
+
+    private void getLastLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Task<Location> task = fusedLocationProviderClient.getLastLocation();
+            task.addOnSuccessListener(location -> {
+                if (location != null) {
+                    currentLocation = location;
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
+                    Toast.makeText(getContext(), "Lat: " + location.getLatitude() + " Lng: " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 //    @Override

@@ -1,9 +1,12 @@
 package com.example.geofencing.helper;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.model.ChildFirebase;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -11,6 +14,7 @@ import com.example.geofencing.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.Random;
 
 public class DBHelper {
@@ -82,5 +86,16 @@ public class DBHelper {
         DB.child("childs")
                 .child(id)
                 .removeValue();
+    }
+
+    public static void saveArea(DatabaseReference DB, String parentId, String name, List<LatLng> points) {
+        for (int i = 0; i < points.size(); i++) {
+            DB.child("users")
+                    .child(parentId)
+                    .child("areas")
+                    .child(name)
+                    .child(String.valueOf(i))
+                    .setValue(points.get(i));
+        }
     }
 }

@@ -13,9 +13,23 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
+        android:name="com.example.geofencing.ui.dashboard.ListAreaFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_list_area">
+        <action
+            android:id="@+id/action_navigation_dashboard_to_addAreaFragment"
+            app:destination="@id/navigation_maps" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_maps"
         android:name="com.example.geofencing.ui.dashboard.MapsFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps">
+        <action
+            android:id="@+id/action_addAreaFragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.geofencing.ui.home.HomeFragment"
