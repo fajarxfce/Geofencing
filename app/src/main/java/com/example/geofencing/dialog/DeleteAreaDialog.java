@@ -39,7 +39,7 @@ public class DeleteAreaDialog extends DialogFragment {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                     // Delete area
-                    // DBHelper.deleteChild(this.DB, user.getUid(), this.id);
+                     DBHelper.deleteArea(this.DB, user.getUid(), this.id);
 
                     // Make alert
                     Toast.makeText(getActivity(), "Area deleted",

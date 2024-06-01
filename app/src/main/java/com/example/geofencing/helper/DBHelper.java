@@ -98,4 +98,12 @@ public class DBHelper {
                     .setValue(points.get(i));
         }
     }
+
+    public static void deleteArea(DatabaseReference DB, String parentId, String id) {
+        DB.child("users")
+                .child(parentId)
+                .child("areas")
+                .child(id)
+                .removeValue();
+    }
 }
