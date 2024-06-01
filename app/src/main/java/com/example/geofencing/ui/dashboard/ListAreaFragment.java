@@ -77,7 +77,9 @@ public class ListAreaFragment extends Fragment {
                 binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
-                    // GGWP
+                    final Bundle bundle = new Bundle();
+                    bundle.putString("id", areaList.get(i1).getId());
+                    Navigation.findNavController(view).navigate(R.id.action_navigation_dashboard_to_detailMapFragment, bundle);
                 });
 
                 adapter.setOnItemLongClickListener((view, i12) -> {

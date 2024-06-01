@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_navigation_dashboard_to_addAreaFragment"
             app:destination="@id/navigation_maps" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_detailMapFragment"
+            app:destination="@id/navigation_detail_map" />
     </fragment>
     <fragment
         android:id="@+id/navigation_maps"
@@ -27,6 +30,15 @@
         tools:layout="@layout/fragment_maps">
         <action
             android:id="@+id/action_addAreaFragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_detail_map"
+        android:name="com.example.geofencing.ui.dashboard.DetailAreaFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_maps">
+        <action
+            android:id="@+id/action_DetailAreaFragment_to_navigation_dashboard"
             app:destination="@id/navigation_dashboard" />
     </fragment>
 
