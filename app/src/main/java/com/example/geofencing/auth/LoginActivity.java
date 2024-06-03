@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String name = StringHelper.usernameFromEmail(user.getEmail());
 
         // Create User If Not Exist
-        DBHelper.saveUser(DB, user.getUid(), name, user.getEmail());
+//        DBHelper.saveUser(DB, user.getUid(), name, user.getEmail());
 
         // Make alert
         Toast.makeText(LoginActivity.this, "Sign In Success !",
