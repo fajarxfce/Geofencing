@@ -14,19 +14,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
+import com.example.geofencing.helper.DBHelper;
+import com.example.geofencing.model.ChildCoordinat;
 import com.example.geofencing.util.KmlUtil;
+import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.PolyUtil;
 
 public class LocationService extends Service {
 
     private static final String TAG = "LocationService";
+    SharedPreferencesUtil sp;
+    private DatabaseReference DB;
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -58,7 +66,17 @@ public class LocationService extends Service {
         }
     };
 
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        sp = new SharedPreferencesUtil(this);
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+    }
+
     private void saveLocationToFirebase(double latitude, double longitude) {
+        Log.d(TAG, "saveLocationToFirebase: "+latitude+" "+longitude);
+        DBHelper.saveCurrentLocation(DB, sp.getPref("pair_code", this) , new ChildCoordinat(latitude, longitude));
 
     }
 

@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.geofencing.Config;
+import com.example.geofencing.model.ChildCoordinat;
 import com.example.geofencing.model.ChildFirebase;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
@@ -14,11 +15,14 @@ import com.example.geofencing.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class DBHelper {
 
+    private static final String TAG = "DBHelper";
     private static String childName, childParentId, childPairKey;
 
     public static void saveUser(DatabaseReference DB, String userId, String name, String email) {
@@ -27,6 +31,18 @@ public class DBHelper {
         DB.child("users")
                 .child(userId)
                 .setValue(user);
+    }
+
+    public static void saveCurrentLocation(DatabaseReference DB, String pairKey, ChildCoordinat coordinat) {
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("coordinat", coordinat);
+
+        DB.child("childs")
+                .child(pairKey)
+                .updateChildren(updates);
+        Log.d(TAG, "saveCurrentLocation: "+DB.child("childs").child(pairKey).toString());
+        Log.d(TAG, "saveCurrentLocation: "+coordinat.getLatitude()+" "+coordinat.getLongitude());
     }
 
     public static void saveChild(DatabaseReference DB, String parentId, String name) {
