@@ -13,14 +13,21 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.example.geofencing.Config;
 import com.example.geofencing.MainActivity;
 import com.example.geofencing.R;
+import com.example.geofencing.helper.DBHelper;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+    private DatabaseReference DB;
 
     // [START receive_message]
     @Override
@@ -75,13 +82,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // [END on_new_token]
 
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+    }
 
     private void handleNow() {
         Log.d(TAG, "Short lived task is done.");
     }
 
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
+        String user = FirebaseAuth.getInstance().getUid();
+        DBHelper.saveParentToken(DB, user, token);
     }
 
     private void sendNotification(String messageBody) {

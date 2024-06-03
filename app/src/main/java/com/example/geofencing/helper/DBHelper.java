@@ -48,6 +48,16 @@ public class DBHelper {
         Log.d(TAG, "saveCurrentLocation: "+coordinat.getLatitude()+" "+coordinat.getLongitude());
     }
 
+    public static void saveParentToken(DatabaseReference DB, String parentId, String fcmToken) {
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("fcm_token", fcmToken);
+
+        DB.child("users")
+                .child(parentId)
+                .updateChildren(updates);
+    }
+
     public static void saveChild(DatabaseReference DB, String parentId, String name) {
         childName = name;
         childParentId = parentId;

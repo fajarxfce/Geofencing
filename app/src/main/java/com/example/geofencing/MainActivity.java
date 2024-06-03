@@ -7,9 +7,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.geofencing.databinding.ActivityMainBinding;
+import com.example.geofencing.helper.DBHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     NavController navController;
+    private DatabaseReference DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         logRegToken();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void logRegToken() {
         // [START log_reg_token]
+        String user = FirebaseAuth.getInstance().getUid();
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -66,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Log and toast
                         String msg = "FCM Registration token: " + token;
+                        DBHelper.saveParentToken(DB, user, token);
                         Log.d(TAG, msg);
                         Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
