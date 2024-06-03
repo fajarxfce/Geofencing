@@ -18,16 +18,16 @@
         tools:layout="@layout/fragment_list_area">
         <action
             android:id="@+id/action_navigation_dashboard_to_addAreaFragment"
-            app:destination="@id/navigation_maps" />
+            app:destination="@id/navigation_polygon_maps" />
         <action
             android:id="@+id/action_navigation_dashboard_to_detailMapFragment"
             app:destination="@id/navigation_detail_map" />
     </fragment>
     <fragment
-        android:id="@+id/navigation_maps"
-        android:name="com.example.geofencing.ui.dashboard.MapsFragment"
+        android:id="@+id/navigation_polygon_maps"
+        android:name="com.example.geofencing.ui.dashboard.PolygonMapsFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_maps">
+        tools:layout="@layout/fragment_polygon_maps">
         <action
             android:id="@+id/action_addAreaFragment_to_navigation_dashboard"
             app:destination="@id/navigation_dashboard" />
@@ -36,7 +36,7 @@
         android:id="@+id/navigation_detail_map"
         android:name="com.example.geofencing.ui.dashboard.DetailAreaFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_maps">
+        tools:layout="@layout/fragment_polygon_maps">
         <action
             android:id="@+id/action_DetailAreaFragment_to_navigation_dashboard"
             app:destination="@id/navigation_dashboard" />
@@ -60,4 +60,9 @@
             android:id="@+id/action_addChildFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
     </fragment>
+    <fragment
+        android:id="@+id/navigation_maps"
+        android:name="com.example.geofencing.ui.map.MapsFragment"
+        android:label="@string/maps"
+        tools:layout="@layout/fragment_maps" />
 </navigation>

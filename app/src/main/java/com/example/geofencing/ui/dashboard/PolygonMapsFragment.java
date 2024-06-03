@@ -5,15 +5,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -23,14 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
-import com.example.geofencing.databinding.FragmentMapsBinding;
+import com.example.geofencing.databinding.FragmentPolygonMapsBinding;
 import com.example.geofencing.dialog.EnterAreaNameDialog;
-import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.services.LocationService;
-import com.example.geofencing.util.KmlUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,23 +34,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class MapsFragment extends Fragment {
+public class PolygonMapsFragment extends Fragment {
 
-    private static final String TAG = "MapsFragment";
+    private static final String TAG = "PolygonMapsFragment";
     private GoogleMap mMap;
-    FragmentMapsBinding binding;
+    FragmentPolygonMapsBinding binding;
     private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private List<LatLng> points = new ArrayList<>();
@@ -218,7 +208,7 @@ public class MapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentMapsBinding.inflate(inflater, container, false);
+        binding = FragmentPolygonMapsBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 

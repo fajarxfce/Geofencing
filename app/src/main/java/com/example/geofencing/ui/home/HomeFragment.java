@@ -33,6 +33,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    private static final String TAG = "HomeFragment";
     private FragmentHomeBinding binding;
     private DatabaseReference DB;
 
@@ -74,6 +75,13 @@ public class HomeFragment extends Fragment {
                 int i = 0;
                 for (DataSnapshot clidSnapshot: dataSnapshot.getChildren()) {
                     i++;
+
+                    Double lat = clidSnapshot.child("latitude").getValue(Double.class);
+                    Double lng = clidSnapshot.child("longitude").getValue(Double.class);
+
+                    if (lat != null || lng != null) {
+                        Log.d(TAG, "onDataChange: have lat lng" + i + " " + clidSnapshot.getKey() + " " + clidSnapshot.child("name").getValue(String.class) + " " + lat + " " + lng);
+                    }
 
                     childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
                 }
