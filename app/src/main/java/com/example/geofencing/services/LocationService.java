@@ -76,7 +76,14 @@ public class LocationService extends Service {
 
     private void saveLocationToFirebase(double latitude, double longitude) {
         Log.d(TAG, "saveLocationToFirebase: "+latitude+" "+longitude);
-        DBHelper.saveCurrentLocation(DB, sp.getPref("pair_code", this) , new ChildCoordinat(latitude, longitude));
+        String pairCode = sp.getPref("pair_code", this);
+        String parentId = sp.getPref("parent_id", this);
+        DBHelper.saveCurrentLocation(
+                DB,
+                pairCode,
+                new ChildCoordinat(latitude, longitude),
+                parentId
+        );
 
     }
 

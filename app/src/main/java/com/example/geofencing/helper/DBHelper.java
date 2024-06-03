@@ -33,15 +33,17 @@ public class DBHelper {
                 .setValue(user);
     }
 
-    public static void saveCurrentLocation(DatabaseReference DB, String pairKey, ChildCoordinat coordinat) {
+    public static void saveCurrentLocation(DatabaseReference DB, String pairCode, ChildCoordinat coordinat, String parentId) {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("coordinat", coordinat);
 
-        DB.child("childs")
-                .child(pairKey)
+        DB.child("users")
+                .child(parentId)
+                .child("childs")
+                .child(pairCode)
                 .updateChildren(updates);
-        Log.d(TAG, "saveCurrentLocation: "+DB.child("childs").child(pairKey).toString());
+        Log.d(TAG, "saveCurrentLocation: "+DB.child("childs").child(pairCode).toString());
         Log.d(TAG, "saveCurrentLocation: "+coordinat.getLatitude()+" "+coordinat.getLongitude());
     }
 
