@@ -36,7 +36,8 @@ public class DBHelper {
     public static void saveCurrentLocation(DatabaseReference DB, String pairCode, ChildCoordinat coordinat, String parentId) {
 
         Map<String, Object> updates = new HashMap<>();
-        updates.put("coordinat", coordinat);
+        updates.put("latitude", coordinat.getLatitude());
+        updates.put("longitude", coordinat.getLongitude());
 
         DB.child("users")
                 .child(parentId)
