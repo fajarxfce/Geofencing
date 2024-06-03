@@ -103,7 +103,10 @@ public class MapsFragment extends Fragment {
 
                     if (lat != null || lng != null) {
                         Log.d(TAG, "onDataChange: have lat lng" + i + " " + clidSnapshot.getKey() + " " + clidSnapshot.child("name").getValue(String.class) + " " + lat + " " + lng);
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(clidSnapshot.child("name").getValue(String.class)));
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lng))
+                                .title(clidSnapshot.child("name").getValue(String.class))
+                                .icon(bitmapDescriptorFromVector(getContext(), R.drawable.baseline_circle_24)));
                     }
 
 //                    childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
