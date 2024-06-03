@@ -116,8 +116,10 @@ public class LocationService extends Service {
             }
 
             LocationRequest locationRequest = new LocationRequest();
-            locationRequest.setInterval(10000);
-            locationRequest.setFastestInterval(20000);
+//            locationRequest.setInterval(10000);
+//            locationRequest.setFastestInterval(20000);
+            locationRequest.setInterval(4000);
+            locationRequest.setFastestInterval(2000);
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
             LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, null);
