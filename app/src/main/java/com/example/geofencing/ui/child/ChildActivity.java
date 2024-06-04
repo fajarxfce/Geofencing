@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityChildBinding;
+import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.KmlUtil;
 import com.google.android.gms.maps.GoogleMap;
@@ -66,6 +68,8 @@ public class ChildActivity extends AppCompatActivity {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
             addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, ChildActivity.this));
 
+
+
             enableUserLocation();
 
 
@@ -77,6 +81,12 @@ public class ChildActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChildBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SendNotification sendNotification = new SendNotification("fK4ryQCpS6O2AFit8GmVII:APA91bE4CFhHyCR_fC7LrTqXXsPiKDcfaFBhaWXHR8lzEZtFblTjexkpM2fV2D4FIOgv2Pxb_lhcQsHoKmXNqLeL7BgeL6h79XClICAIKj7D0zU31-iVcEE0Sb-rfF---nXUFAY_iCYx",
+                "Location Service", "You are outside the polygon", this);
+        sendNotification.sendNotification();
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);

@@ -5,6 +5,10 @@ apply plugin: 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 android {
     compileSdkVersion 34
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
     defaultConfig {
         applicationId "com.example.geofencing"
         minSdkVersion 31
@@ -51,4 +55,15 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:17.0.0"
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation 'com.google.firebase:firebase-messaging:23.2.0'
+
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+
+    // define any required OkHttp artifacts without version
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation "com.google.auth:google-auth-library-oauth2-http:1.19.0"
+
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
 }

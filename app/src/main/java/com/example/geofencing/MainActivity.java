@@ -3,11 +3,14 @@ package com.example.geofencing;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.geofencing.databinding.ActivityMainBinding;
 import com.example.geofencing.helper.DBHelper;
+import com.example.geofencing.model.SendNotification;
+import com.example.geofencing.util.AccessToken;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         logRegToken();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        Log.d(TAG, "onCreate: token "+ AccessToken.getAccessToken());
+
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each

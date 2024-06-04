@@ -19,6 +19,7 @@ import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.model.ChildCoordinat;
+import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.util.KmlUtil;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.location.LocationCallback;
@@ -50,12 +51,15 @@ public class LocationService extends Service {
                 saveLocationToFirebase(latitude, longitude);
 
                 boolean inside = PolyUtil.containsLocation(currentLocation, kmlUtil.parseKMLFile(R.raw.contoh, getApplicationContext()), true);
+
                 if (inside) {
                     // The current location is inside the polygon
                     Log.d(TAG, "CHECK_ON_POLYGON: Inside the polygon...");
+
                 } else {
                     // The current location is outside the polygon
                     Log.d(TAG, "CHECK_ON_POLYGON: Outside the polygon...");
+//                    sendNotification.sendNotification();
                 }
 
                 Log.d(TAG, "onLocationResult: "+latitude+" "+longitude);
