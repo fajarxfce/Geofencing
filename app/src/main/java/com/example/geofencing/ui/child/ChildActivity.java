@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,29 +20,41 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityChildBinding;
+import com.example.geofencing.model.ChildData;
 import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.AccessToken;
 import com.example.geofencing.util.KmlUtil;
+import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 public class ChildActivity extends AppCompatActivity {
 
 
+    private static final String TAG = "ChildActivity";
     ActivityChildBinding binding;
     private GoogleMap mMap;
 
     private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
+    private DatabaseReference DB;
+    SharedPreferencesUtil sf = new SharedPreferencesUtil(ChildActivity.this);
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -84,10 +97,11 @@ public class ChildActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        retrieveFcmToken();
 
-        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), "fK4ryQCpS6O2AFit8GmVII:APA91bE4CFhHyCR_fC7LrTqXXsPiKDcfaFBhaWXHR8lzEZtFblTjexkpM2fV2D4FIOgv2Pxb_lhcQsHoKmXNqLeL7BgeL6h79XClICAIKj7D0zU31-iVcEE0Sb-rfF---nXUFAY_iCYx",
-                "Location Service", "You are outside the polygon");
-        sendNotification.sendNotification();
+//        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), "fK4ryQCpS6O2AFit8GmVII:APA91bE4CFhHyCR_fC7LrTqXXsPiKDcfaFBhaWXHR8lzEZtFblTjexkpM2fV2D4FIOgv2Pxb_lhcQsHoKmXNqLeL7BgeL6h79XClICAIKj7D0zU31-iVcEE0Sb-rfF---nXUFAY_iCYx",
+//                "Location Service", "You are outside the polygon");
+//        sendNotification.sendNotification();
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -105,6 +119,43 @@ public class ChildActivity extends AppCompatActivity {
         } else {
             startLocationService();
         }
+
+    }
+
+    private void retrieveFcmToken() {
+
+        String pairCode = sf.getPref("pair_code", ChildActivity.this);
+        String parentId = sf.getPref("parent_id", ChildActivity.this);
+
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + parentId);
+
+        DB.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    String fcmToken = snapshot.child("fcm_token").getValue(String.class);
+                    // Execute
+
+                    if (fcmToken != null) {
+                        Log.d(TAG, "onDataChange: "+fcmToken);
+                        sf.setPref("parent_fcm_token", fcmToken, ChildActivity.this);
+
+                    }
+
+                }else {
+                    Toast.makeText(ChildActivity.this, "Pair code is invalid", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onDataChange: "+snapshot);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
 
     }
 
