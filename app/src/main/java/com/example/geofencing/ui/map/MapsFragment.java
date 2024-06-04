@@ -88,7 +88,7 @@ public class MapsFragment extends Fragment {
     }
 
     private void drawPolygon(){
-        mMap.clear();
+//        mMap.clear();
         PolygonOptions polygon = new PolygonOptions();
         for (LatLng point : points) {
             mMap.addMarker(new MarkerOptions().position(point));
