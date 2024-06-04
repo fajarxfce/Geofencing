@@ -49,10 +49,6 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Log.d(TAG, "onCreate: token "+ AccessToken.getAccessToken());
-
-
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -79,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
                         // Get new FCM registration token
                         String token = task.getResult();
+
+                        // Test send notification
+                        Log.d(TAG, "onCreate: token "+ AccessToken.getAccessToken());
+                        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), token,
+                                "Location Service", "You are outside the polygon");
+                        sendNotification.sendNotification();
 
                         // Log and toast
                         String msg = "FCM Registration token: " + token;
