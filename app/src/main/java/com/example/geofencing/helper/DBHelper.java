@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.example.geofencing.Config;
 import com.example.geofencing.model.ChildCoordinat;
 import com.example.geofencing.model.ChildFirebase;
+import com.example.geofencing.model.LocationHistory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +32,11 @@ public class DBHelper {
         DB.child("users")
                 .child(userId)
                 .setValue(user);
+    }
+
+    public static void saveLocationHistory(DatabaseReference db, String pairCode, LocationHistory location) {
+        db.child("location_history").child(pairCode).push().setValue(location);
+        Log.d(TAG, "saveLocationHistory: saved");
     }
 
     public static void saveCurrentLocation(DatabaseReference DB, String pairCode, ChildCoordinat coordinat, String parentId) {

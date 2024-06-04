@@ -1,5 +1,6 @@
 package com.example.geofencing.model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class SendNotification {
         this.body = body;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void sendNotification() {
         new AsyncTask<Void, Void, Void>() {
             @Override
