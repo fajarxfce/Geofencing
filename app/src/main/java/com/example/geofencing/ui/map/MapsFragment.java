@@ -31,12 +31,14 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,8 @@ public class MapsFragment extends Fragment {
     private static final String TAG = "MapsFragment";
     private DatabaseReference DB;
     private GoogleMap mMap;
+
+    private List<LatLng> points = new ArrayList<>();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -61,6 +65,7 @@ public class MapsFragment extends Fragment {
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
             getAllChild();
+            getAllPolygonData();
         }
     };
 
@@ -80,6 +85,73 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+    }
+
+    private void drawPolygon(){
+        mMap.clear();
+        PolygonOptions polygon = new PolygonOptions();
+        for (LatLng point : points) {
+            mMap.addMarker(new MarkerOptions().position(point));
+            polygon.add(point);
+        }
+        polygon.fillColor(R.color.purple_700);
+        mMap.addPolygon(polygon);
+        for (int i = 0; i < points.size(); i++) {
+            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
+        }
+    }
+
+    private void getAllPolygonData() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Get data from db
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/areas");
+
+        DB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DatabaseReference DB2;
+                int i = 0;
+                for (DataSnapshot areaSnapshot: dataSnapshot.getChildren()) {
+                    i++;
+
+                    areaSnapshot.getKey();
+                    DB2 = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/areas/" + areaSnapshot.getKey());
+
+                    DB2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            
+                            for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
+                                LatLng point = new LatLng(
+                                        areaSnapshot.child("latitude").getValue(Double.class),
+                                        areaSnapshot.child("longitude").getValue(Double.class)
+                                );
+
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
+                                points.add(point);
+
+                                mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
+                                drawPolygon();
+                            }
+                        }
+
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("Error", databaseError.getMessage());
+                        }
+                    });
+
+                    if(i == 1) {
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("Error", databaseError.getMessage());
+            }
+        });
     }
 
     private void getAllChild() {
@@ -108,8 +180,6 @@ public class MapsFragment extends Fragment {
                                 .title(clidSnapshot.child("name").getValue(String.class))
                                 .icon(bitmapDescriptorFromVector(getContext(), R.drawable.baseline_circle_24)));
                     }
-
-//                    childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
                 }
 
             }
