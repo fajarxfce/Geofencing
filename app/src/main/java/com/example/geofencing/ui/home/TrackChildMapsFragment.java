@@ -120,23 +120,17 @@ public class TrackChildMapsFragment extends Fragment {
         latLngRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Create a new List to hold the LatLng
+
                 List<LatLng> latLngList = new ArrayList<>();
 
-                // Iterate over the children of the dataSnapshot
                 for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
-                    // Get the latitude and longitude as Double
                     Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = latLngSnapshot.child("longitude").getValue(Double.class);
 
-                    // Create a LatLng object and add it to the list
                     LatLng latLng = new LatLng(latitude, longitude);
                     latLngList.add(latLng);
                 }
 
-                // Now you have a list of LatLng, you can use it as needed
-                // For example, you could pass it to a method that updates your UI
-//                updateUIWithLatLng(latLngList);
                 drawPolygon(latLngList);
             }
 
