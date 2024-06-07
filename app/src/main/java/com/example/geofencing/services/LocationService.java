@@ -29,15 +29,24 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocationService extends Service {
 
     private static final String TAG = "LocationService";
     SharedPreferencesUtil sp;
     private DatabaseReference DB;
+    List<LatLng> latLngList;
+
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -52,19 +61,23 @@ public class LocationService extends Service {
 
                 saveLocationToFirebase(latitude, longitude);
 
-                boolean inside = PolyUtil.containsLocation(currentLocation, kmlUtil.parseKMLFile(R.raw.contoh, getApplicationContext()), true);
+                if (latLngList != null) {
+                    boolean inside = PolyUtil.containsLocation(currentLocation, latLngList, true);
 
-                if (inside) {
-                    // The current location is inside the polygon
-                    Log.d(TAG, "CHECK_ON_POLYGON: Inside the polygon...");
+                    if (inside) {
+                        // The current location is inside the polygon
+                        Log.d(TAG, "CHECK_ON_POLYGON: Inside the polygon...");
 
-                } else {
-                    // The current location is outside the polygon
-                    Log.d(TAG, "CHECK_ON_POLYGON: Outside the polygon...");
+                    } else {
+                        // The current location is outside the polygon
+                        Log.d(TAG, "CHECK_ON_POLYGON: Outside the polygon...");
 //                    sendNotification.sendNotification();
+                    }
+
+                    Log.d(TAG, "onLocationResult: " + latitude + " " + longitude);
                 }
 
-                Log.d(TAG, "onLocationResult: "+latitude+" "+longitude);
+
                 // Do something with the location
                 // For example, send the location to a server
             }
@@ -88,7 +101,7 @@ public class LocationService extends Service {
                 String accessToken = AccessToken.getAccessToken();
                 String name = sp.getPref("name", getApplicationContext());
                 String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
-                String body = "You child  : "+name+" outside the polygon";
+                String body = "You child  : " + name + " outside the polygon";
                 String title = "Location Service";
 
 
@@ -110,7 +123,7 @@ public class LocationService extends Service {
     };
 
     private void saveLocationHistoryToFirebase(double latitude, double longitude) {
-        Log.d(TAG, "saveLocationHistoryToFirebase: "+latitude+" "+longitude);
+        Log.d(TAG, "saveLocationHistoryToFirebase: " + latitude + " " + longitude);
         String pairCode = sp.getPref("pair_code", this);
         DBHelper.saveLocationHistory(
                 DB,
@@ -128,16 +141,102 @@ public class LocationService extends Service {
         LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationHistoryCallback, null);
     }
 
+    private void getAreas(String childId) {
+        // Get reference to the areas
+        DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
+
+        areasRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                List<String> areas = new ArrayList<>();
+
+                int i = 0;
+                for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
+                    i++;
+                    String area = areaSnapshot.getValue(String.class);
+                    areas.add(area);
+                    break;
+                }
+
+                getPolygonData(areas);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+                Log.d(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void getPolygonData(List<String> areas) {
+        // Update your UI with the areas here
+        String userId = sp.getPref("parent_id", this);
+
+        for (int i = 0; i < areas.size(); i++) {
+            String areaName = areas.get(i);
+
+            Log.d(TAG, "getPolygonData: " + areaName);
+
+            getLatLng(userId, areaName);
+
+        }
+
+    }
+
+    private void getLatLng(String userId, String areaName) {
+        // Get reference to the latitude and longitude
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users").child(userId).child("areas").child(areaName);
+
+
+        Log.d(TAG, "getLatLng: " + latLngRef.toString());
+        // Attach a ValueEventListener to read the data
+        latLngRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                latLngList = new ArrayList<>();
+
+                int i = 0;
+                for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
+                    i++;
+                    Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
+                    Double longitude = latLngSnapshot.child("longitude").getValue(Double.class);
+
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    latLngList.add(latLng);
+
+                }
+
+                for (int j = 0; j < latLngList.size(); j++) {
+                    Log.d(TAG, "onDataChange: getLatLng " + areaName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
+                }
+
+//                drawPolygon(latLngList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+                Log.d(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         sp = new SharedPreferencesUtil(this);
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        String pairCode = sp.getPref("pair_code", this);
+        getAreas(pairCode);
+
     }
 
     private void saveLocationToFirebase(double latitude, double longitude) {
-        Log.d(TAG, "saveLocationToFirebase: "+latitude+" "+longitude);
+        Log.d(TAG, "saveLocationToFirebase: " + latitude + " " + longitude);
         String pairCode = sp.getPref("pair_code", this);
         String parentId = sp.getPref("parent_id", this);
         DBHelper.saveCurrentLocation(
@@ -152,7 +251,7 @@ public class LocationService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        throw  new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     private void startLocationService() {
@@ -197,13 +296,13 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null){
+        if (intent != null) {
             String action = intent.getAction();
-            if (action != null){
-                if (action.equals(Contstants.ACTION_START_LOCATION_SERVICE)){
+            if (action != null) {
+                if (action.equals(Contstants.ACTION_START_LOCATION_SERVICE)) {
                     startLocationService();
                     startLocationHistoryService();
-                } else if (action.equals(Contstants.ACTION_STOP_LOCATION_SERVICE)){
+                } else if (action.equals(Contstants.ACTION_STOP_LOCATION_SERVICE)) {
                     stopLocationService();
                 }
             }

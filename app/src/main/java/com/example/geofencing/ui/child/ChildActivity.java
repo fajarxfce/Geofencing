@@ -34,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +43,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChildActivity extends AppCompatActivity {
@@ -55,6 +57,7 @@ public class ChildActivity extends AppCompatActivity {
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private DatabaseReference DB;
     SharedPreferencesUtil sf = new SharedPreferencesUtil(ChildActivity.this);
+    List<LatLng> latLngList;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -80,11 +83,13 @@ public class ChildActivity extends AppCompatActivity {
             KmlUtil kmlUtil = new KmlUtil();
 
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-            addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, ChildActivity.this));
+//            addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, ChildActivity.this));
 
 
-
+            String childId = sf.getPref("pair_code", ChildActivity.this);
             enableUserLocation();
+
+            getAreas(childId);
 
 
         }
@@ -120,6 +125,103 @@ public class ChildActivity extends AppCompatActivity {
             startLocationService();
         }
 
+    }
+
+    private void getAreas(String childId) {
+        // Get reference to the areas
+        DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
+
+        areasRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                List<String> areas = new ArrayList<>();
+
+                int i = 0;
+                for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
+                    i++;
+                    String area = areaSnapshot.getValue(String.class);
+                    areas.add(area);
+                    break;
+                }
+
+                getPolygonData(areas);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+                Log.d(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void getPolygonData(List<String> areas) {
+        // Update your UI with the areas here
+        String userId = sf.getPref("parent_id", this);
+
+        for (int i = 0; i < areas.size(); i++) {
+            String areaName = areas.get(i);
+
+            Log.d(TAG, "getPolygonData: " + areaName);
+
+            getLatLng(userId, areaName);
+
+        }
+
+    }
+
+    private void getLatLng(String userId, String areaName) {
+        // Get reference to the latitude and longitude
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users").child(userId).child("areas").child(areaName);
+
+
+        Log.d(TAG, "getLatLng: " + latLngRef.toString());
+        // Attach a ValueEventListener to read the data
+        latLngRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                latLngList = new ArrayList<>();
+
+                int i = 0;
+                for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
+                    i++;
+                    Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
+                    Double longitude = latLngSnapshot.child("longitude").getValue(Double.class);
+
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    latLngList.add(latLng);
+
+                }
+
+                for (int j = 0; j < latLngList.size(); j++) {
+                    Log.d(TAG, "onDataChange: getLatLng " + areaName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
+                }
+
+                drawPolygon(latLngList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+                Log.d(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void drawPolygon(List<LatLng> points ){
+//        mMap.clear();
+        PolygonOptions polygon = new PolygonOptions();
+        for (LatLng point : points) {
+//            mMap.addMarker(new MarkerOptions().position(point));
+            polygon.add(point);
+        }
+        polygon.fillColor(R.color.purple_700);
+        mMap.addPolygon(polygon);
+        for (int i = 0; i < points.size(); i++) {
+            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
+        }
     }
 
     private void retrieveFcmToken() {
