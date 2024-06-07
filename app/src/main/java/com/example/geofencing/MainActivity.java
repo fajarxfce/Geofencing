@@ -78,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
                         // Test send notification
                         Log.d(TAG, "onCreate: token "+ AccessToken.getAccessToken());
-                        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), token,
-                                "Location Service", "You are outside the polygon");
-                        sendNotification.sendNotification();
 
                         // Log and toast
                         String msg = "FCM Registration token: " + token;
