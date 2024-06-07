@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import com.example.geofencing.Config;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.FragmentTrackChildMapsBinding;
-import com.example.geofencing.model.Child;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -60,11 +59,115 @@ public class TrackChildMapsFragment extends Fragment {
                 String childId = getArguments().getString("id");
                 String name = getArguments().getString("name");
                 getChildLocation(childId, name);
+                getAreas(childId);
 
             }
 
         }
     };
+
+    private void getAreas(String childId) {
+        // Get reference to the areas
+        DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
+
+        // Attach a ValueEventListener to read the data
+        areasRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Create a new List to hold the areas
+                List<String> areas = new ArrayList<>();
+
+                // Iterate over the children of the dataSnapshot
+                for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
+                    // Get the area as a String and add it to the list
+                    String area = areaSnapshot.getValue(String.class);
+                    areas.add(area);
+                }
+
+                // Now you have a list of areas, you can use it as needed
+                // For example, you could pass it to a method that updates your UI
+                getPolygonData(areas);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+                Log.d(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void getPolygonData(List<String> areas) {
+        // Update your UI with the areas here
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        for (int i = 0; i < areas.size(); i++) {
+            String areaName = areas.get(i);
+
+            getLatLng(userId, areaName);
+
+        }
+
+    }
+
+    private void getLatLng(String userId, String areaName) {
+        // Get reference to the latitude and longitude
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users").child(userId).child("areas").child(areaName);
+
+
+        Log.d(TAG, "getLatLng: "+latLngRef.toString());
+        // Attach a ValueEventListener to read the data
+        latLngRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Create a new List to hold the LatLng
+                List<LatLng> latLngList = new ArrayList<>();
+
+                // Iterate over the children of the dataSnapshot
+                for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
+                    // Get the latitude and longitude as Double
+                    Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
+                    Double longitude = latLngSnapshot.child("longitude").getValue(Double.class);
+
+                    // Create a LatLng object and add it to the list
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    latLngList.add(latLng);
+                }
+
+                // Now you have a list of LatLng, you can use it as needed
+                // For example, you could pass it to a method that updates your UI
+//                updateUIWithLatLng(latLngList);
+                drawPolygon(latLngList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+                Log.d(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void drawPolygon(List<LatLng> points ){
+//        mMap.clear();
+        PolygonOptions polygon = new PolygonOptions();
+        for (LatLng point : points) {
+//            mMap.addMarker(new MarkerOptions().position(point));
+            polygon.add(point);
+        }
+        polygon.fillColor(R.color.purple_700);
+        mMap.addPolygon(polygon);
+        for (int i = 0; i < points.size(); i++) {
+            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
+        }
+    }
+
+    private void updateUIWithLatLng(List<LatLng> latLngList) {
+        // Update your UI with the LatLng list here
+    }
+
+
+
 
     private void drawPolygon(LatLng point) {
         mMap.clear();
