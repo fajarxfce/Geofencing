@@ -16,10 +16,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.geofencing.Config;
-import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
+import com.example.geofencing.bottomsheet.MyBottomSheetDialogFragment;
 import com.example.geofencing.databinding.FragmentDetailAreaBinding;
-import com.example.geofencing.model.Child;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -100,9 +98,23 @@ public class DetailAreaFragment extends Fragment {
                 }
             });
 
+            binding.addChild.setOnClickListener(v -> showAddChildDialog());
+
             enableUserLocation();
         }
+
+
+
     };
+
+    private void showAddChildDialog() {
+        Bundle bundle = new Bundle();
+        bundle.putString("pair_code", id);
+
+        MyBottomSheetDialogFragment bottomSheetDialogFragment = new MyBottomSheetDialogFragment();
+        bottomSheetDialogFragment.setArguments(bundle);
+        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
+    }
 
     private void drawPolygon(){
         mMap.clear();
@@ -162,6 +174,9 @@ public class DetailAreaFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentDetailAreaBinding.inflate(inflater, container, false);
+
+
+
         return binding.getRoot();
     }
 
