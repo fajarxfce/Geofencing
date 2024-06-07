@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_navigation_home_to_addChildFragment"
             app:destination="@id/addChildFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_trackChildMapsFragment"
+            app:destination="@id/trackChildMapsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addChildFragment"
@@ -65,4 +68,13 @@
         android:name="com.example.geofencing.ui.map.MapsFragment"
         android:label="@string/maps"
         tools:layout="@layout/fragment_maps" />
+    <fragment
+        android:id="@+id/trackChildMapsFragment"
+        android:name="com.example.geofencing.ui.home.TrackChildMapsFragment"
+        android:label="fragment_track_child_maps"
+        tools:layout="@layout/fragment_track_child_maps" >
+        <action
+            android:id="@+id/action_trackChildMapsFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>

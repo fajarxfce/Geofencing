@@ -91,8 +91,12 @@ public class HomeFragment extends Fragment {
                 binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
-                    ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
-                    childCodeDialog.show(getParentFragmentManager(), "child_code");
+                    final Bundle bundle = new Bundle();
+                    bundle.putString("id", childList.get(i1).getId());
+                    bundle.putString("name", childList.get(i1).getName());
+//                    ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
+//                    childCodeDialog.show(getParentFragmentManager(), "child_code");
+                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_trackChildMapsFragment, bundle);
                 });
 
                 adapter.setOnItemLongClickListener((view, i12) -> {
