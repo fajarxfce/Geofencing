@@ -2,6 +2,7 @@ package com.example.geofencing.ui.dashboard;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -110,6 +111,7 @@ public class DetailAreaFragment extends Fragment {
     private void showAddChildDialog() {
         Bundle bundle = new Bundle();
         bundle.putString("pair_code", id);
+        bundle.putString("area_name", getArguments().getString("area_name"));
 
         MyBottomSheetDialogFragment bottomSheetDialogFragment = new MyBottomSheetDialogFragment();
         bottomSheetDialogFragment.setArguments(bundle);
@@ -185,6 +187,12 @@ public class DetailAreaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
+        String areaName =  getArguments().getString("area_name");
+
+        if (getActivity() != null && getActivity() instanceof AppCompatActivity) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(areaName);
+        }
 
         id = getArguments().getString("id");
 

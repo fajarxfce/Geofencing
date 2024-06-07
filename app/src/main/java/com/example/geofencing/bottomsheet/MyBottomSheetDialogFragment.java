@@ -2,19 +2,40 @@ package com.example.geofencing.bottomsheet;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.geofencing.Config;
+import com.example.geofencing.R;
+import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentBottomsheetDialogBinding;
+import com.example.geofencing.dialog.DeleteChildDialog;
+import com.example.geofencing.model.Child;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyBottomSheetDialogFragment extends com.google.android.material.bottomsheet.BottomSheetDialogFragment {
 
+    private static final String TAG = "MyBottomSheetDialogFragment";
+    private DatabaseReference DB;
     FragmentBottomsheetDialogBinding binding;
     @NonNull
     @Override
@@ -26,6 +47,7 @@ public class MyBottomSheetDialogFragment extends com.google.android.material.bot
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentBottomsheetDialogBinding.inflate(inflater, container, false);
+
         return binding.getRoot();
     }
 
@@ -38,11 +60,63 @@ public class MyBottomSheetDialogFragment extends com.google.android.material.bot
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
 
         if (getArguments() != null) {
             String id = getArguments().getString("pair_code");
+            getAllChild();
         }
 
+    }
+
+    private void getAllChild(){
+
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            // Get data from db
+            DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/childs");
+            DB.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<Child> childList = new ArrayList<>();
+
+                    int i = 0;
+                    for (DataSnapshot clidSnapshot: dataSnapshot.getChildren()) {
+                        i++;
+
+                        Log.d(TAG, "onDataChange: "+clidSnapshot.getKey());
+
+                        childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
+                    }
+
+                    ChildAdapter adapter = new ChildAdapter(childList);
+
+                    binding.recyclerView.setAdapter(adapter);
+                    adapter.setOnItemClickListener((view, i1) -> {
+                        Toast.makeText(requireContext(), "Clicked : " + childList.get(i1).getId(), Toast.LENGTH_SHORT).show();
+                        assignToChild(childList.get(i1).getId());
+                    });
+
+                    adapter.setOnItemLongClickListener((view, i12) -> {
+
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("Error", databaseError.getMessage());
+                }
+            });
+    }
+
+    private void assignToChild(String pairCode){
+        String areaName = getArguments().getString("area_name");
+        Log.d(TAG, "assignToChild: "+pairCode + " "+ areaName);
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(pairCode).child("areas");
+        Log.d(TAG, "assignToChild: "+DB);
+        DB.push().setValue(areaName);
     }
 
     @Override

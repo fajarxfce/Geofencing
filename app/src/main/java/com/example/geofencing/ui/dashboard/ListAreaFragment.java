@@ -79,6 +79,7 @@ public class ListAreaFragment extends Fragment {
                 adapter.setOnItemClickListener((view, i1) -> {
                     final Bundle bundle = new Bundle();
                     bundle.putString("id", areaList.get(i1).getId());
+                    bundle.putString("area_name", areaList.get(i1).getName());
                     Navigation.findNavController(view).navigate(R.id.action_navigation_dashboard_to_detailMapFragment, bundle);
                 });
 
