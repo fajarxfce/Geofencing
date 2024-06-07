@@ -95,7 +95,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendRegistrationToServer(String token) {
         String user = FirebaseAuth.getInstance().getUid();
-        DBHelper.saveParentToken(DB, user, token);
+        if (user != null){
+            DBHelper.saveParentToken(DB, user, token);
+        }
+
     }
 
     private void sendNotification(String messageBody) {
