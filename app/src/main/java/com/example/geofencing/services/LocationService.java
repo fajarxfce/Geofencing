@@ -57,12 +57,11 @@ public class LocationService extends Service {
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
                 LatLng currentLocation = new LatLng(latitude, longitude);
-                KmlUtil kmlUtil = new KmlUtil();
 
                 saveLocationToFirebase(latitude, longitude);
 
                 if (latLngList != null) {
-                    boolean inside = PolyUtil.containsLocation(currentLocation, latLngList, true);
+                    boolean inside = PolyUtil.containsLocation(currentLocation.latitude, currentLocation.longitude, latLngList, true);
 
                     if (inside) {
                         // The current location is inside the polygon
