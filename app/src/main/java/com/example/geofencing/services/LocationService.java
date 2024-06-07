@@ -47,6 +47,17 @@ public class LocationService extends Service {
     private DatabaseReference DB;
     List<LatLng> latLngList;
 
+    private LocationListener locationListener;
+    private Boolean lastStatus = null;
+
+    public interface LocationListener{
+        void onLocationChanged(boolean inside);
+    }
+
+    private void setLocationListener(LocationListener locationListener){
+        this.locationListener = locationListener;
+    }
+
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -62,6 +73,13 @@ public class LocationService extends Service {
 
                 if (latLngList != null) {
                     boolean inside = PolyUtil.containsLocation(currentLocation.latitude, currentLocation.longitude, latLngList, true);
+
+                    if (lastStatus == null || inside != lastStatus) {
+                        if (locationListener != null) {
+                            locationListener.onLocationChanged(inside);
+                        }
+                        lastStatus = inside;
+                    }
 
                     if (inside) {
                         // The current location is inside the polygon
@@ -97,14 +115,7 @@ public class LocationService extends Service {
                 KmlUtil kmlUtil = new KmlUtil();
                 boolean inside = PolyUtil.containsLocation(currentLocation, kmlUtil.parseKMLFile(R.raw.contoh, getApplicationContext()), true);
 
-                String accessToken = AccessToken.getAccessToken();
-                String name = sp.getPref("name", getApplicationContext());
-                String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
-                String body = "You child  : " + name + " outside the polygon";
-                String title = "Location Service";
 
-
-                SendNotification sendNotification = new SendNotification(accessToken, parentFcmToken, title, body);
 
                 if (inside) {
                     // The current location is inside the polygon
@@ -113,7 +124,6 @@ public class LocationService extends Service {
                 } else {
                     // The current location is outside the polygon
                     Log.d(TAG, "CHECK_ON_POLYGON: Outside the polygon...");
-                    sendNotification.sendNotification();
                 }
 
                 saveLocationHistoryToFirebase(latitude, longitude);
@@ -232,6 +242,32 @@ public class LocationService extends Service {
         String pairCode = sp.getPref("pair_code", this);
         getAreas(pairCode);
 
+        setLocationListener(new LocationListener() {
+            @Override
+            public void onLocationChanged(boolean inside) {
+
+                String accessToken = AccessToken.getAccessToken();
+                String name = sp.getPref("name", getApplicationContext());
+                String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
+                String body = "";
+                String title = "Location Service";
+                if (inside){
+                    body = "Your child "+name + " is inside the polygon";
+                } else {
+                    body = "Your child" + name + " is outside the polygon";
+                }
+
+                SendNotification sendNotification = new SendNotification(accessToken, parentFcmToken, title, body);
+
+                if (inside) {
+                    Log.d(TAG, "onLocationChanged: Inside the polygon");
+                    sendNotification.sendNotification();
+                } else {
+                    Log.d(TAG, "onLocationChanged: Outside the polygon");
+                    sendNotification.sendNotification();
+                }
+            }
+        });
     }
 
     private void saveLocationToFirebase(double latitude, double longitude) {

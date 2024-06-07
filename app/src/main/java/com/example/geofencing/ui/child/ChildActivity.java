@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -30,12 +31,16 @@ import com.example.geofencing.services.LocationService;
 import com.example.geofencing.util.AccessToken;
 import com.example.geofencing.util.KmlUtil;
 import com.example.geofencing.util.SharedPreferencesUtil;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,6 +64,10 @@ public class ChildActivity extends AppCompatActivity {
     SharedPreferencesUtil sf = new SharedPreferencesUtil(ChildActivity.this);
     List<LatLng> latLngList;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
+
+    private Location currentLocation;
+
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         /**
@@ -78,11 +87,9 @@ public class ChildActivity extends AppCompatActivity {
 
 
             mMap = googleMap;
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
             KmlUtil kmlUtil = new KmlUtil();
 
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 //            addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, ChildActivity.this));
 
 
@@ -103,6 +110,8 @@ public class ChildActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         retrieveFcmToken();
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        getLastLocation();
 
 //        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), "fK4ryQCpS6O2AFit8GmVII:APA91bE4CFhHyCR_fC7LrTqXXsPiKDcfaFBhaWXHR8lzEZtFblTjexkpM2fV2D4FIOgv2Pxb_lhcQsHoKmXNqLeL7BgeL6h79XClICAIKj7D0zU31-iVcEE0Sb-rfF---nXUFAY_iCYx",
 //                "Location Service", "You are outside the polygon");
@@ -261,16 +270,6 @@ public class ChildActivity extends AppCompatActivity {
 
     }
 
-    private void addPolygon(List<LatLng> latLngList) {
-
-        PolygonOptions polygonOptions = new PolygonOptions();
-        polygonOptions.addAll(latLngList);
-        polygonOptions.strokeColor(Color.argb(255, 255, 0, 0));
-        polygonOptions.fillColor(Color.argb(64, 255, 0, 0));
-        polygonOptions.strokeWidth(4);
-        mMap.addPolygon(polygonOptions);
-    }
-
     private boolean isLocationServiceRunning() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (activityManager != null) {
@@ -340,6 +339,20 @@ public class ChildActivity extends AppCompatActivity {
             } else {
                 ActivityCompat.requestPermissions(ChildActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
             }
+        }
+    }
+
+    private void getLastLocation() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Task<Location> task = fusedLocationProviderClient.getLastLocation();
+            task.addOnSuccessListener(location -> {
+                if (location != null) {
+                    currentLocation = location;
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
+                    Toast.makeText(this, "Lat: " + location.getLatitude() + " Lng: " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
