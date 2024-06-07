@@ -89,8 +89,9 @@ public class DetailAreaFragment extends Fragment {
                         points.add(point);
 
                         mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
-                        drawPolygon();
                     }
+
+                    drawPolygon(points);
                 }
 
                 @Override
@@ -118,14 +119,11 @@ public class DetailAreaFragment extends Fragment {
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
     }
 
-    private void drawPolygon(){
-        mMap.clear();
+    private void drawPolygon(List<LatLng> points){
         PolygonOptions polygon = new PolygonOptions();
         for (LatLng point : points) {
-            mMap.addMarker(new MarkerOptions().position(point));
             polygon.add(point);
         }
-        binding.squareFeet.setText("Area: " + SphericalUtil.computeArea(points));
         polygon.fillColor(R.color.purple_700);
         mMap.addPolygon(polygon);
         for (int i = 0; i < points.size(); i++) {
