@@ -67,6 +67,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="Login As A Child" />
+        android:text="Hubungkan Dengan Orang Tua" />
 
 </LinearLayout>

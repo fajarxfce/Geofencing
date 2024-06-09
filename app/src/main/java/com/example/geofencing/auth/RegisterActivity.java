@@ -128,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 Toast.LENGTH_SHORT).show();
 
         // Move to Main Activity
-        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-        finish();
+//        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+//        finish();
     }
 }
