@@ -87,6 +87,7 @@ public class ChildActivity extends AppCompatActivity {
 
 
             mMap = googleMap;
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
             KmlUtil kmlUtil = new KmlUtil();
 
@@ -151,7 +152,7 @@ public class ChildActivity extends AppCompatActivity {
                     i++;
                     String area = areaSnapshot.getValue(String.class);
                     areas.add(area);
-                    break;
+//                    break;
                 }
 
                 getPolygonData(areas);
@@ -226,7 +227,8 @@ public class ChildActivity extends AppCompatActivity {
 //            mMap.addMarker(new MarkerOptions().position(point));
             polygon.add(point);
         }
-        polygon.fillColor(R.color.purple_700);
+        polygon.fillColor(R.color.red_transparent);
+        polygon.strokeColor(Color.RED);
         mMap.addPolygon(polygon);
         for (int i = 0; i < points.size(); i++) {
             Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);

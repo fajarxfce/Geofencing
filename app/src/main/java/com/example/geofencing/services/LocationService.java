@@ -49,6 +49,7 @@ public class LocationService extends Service {
 
     private LocationListener locationListener;
     private Boolean lastStatus = null;
+    List<List<LatLng>> polygons = new ArrayList<>();
 
     public interface LocationListener{
         void onLocationChanged(boolean inside);
@@ -71,27 +72,20 @@ public class LocationService extends Service {
 
                 saveLocationToFirebase(latitude, longitude);
 
-                if (latLngList != null) {
-                    boolean inside = PolyUtil.containsLocation(currentLocation.latitude, currentLocation.longitude, latLngList, true);
-
-                    if (lastStatus == null || inside != lastStatus) {
-                        if (locationListener != null) {
-                            locationListener.onLocationChanged(inside);
-                        }
-                        lastStatus = inside;
+                boolean insideAnyPolygon = false;
+                for (List<LatLng> polygon : polygons) {
+                    if (PolyUtil.containsLocation(currentLocation.latitude, currentLocation.longitude, polygon, true)) {
+                        insideAnyPolygon = true;
+                        break;
                     }
+                }
 
-                    if (inside) {
-                        // The current location is inside the polygon
-                        Log.d(TAG, "CHECK_ON_POLYGON: Inside the polygon...");
-
-                    } else {
-                        // The current location is outside the polygon
-                        Log.d(TAG, "CHECK_ON_POLYGON: Outside the polygon...");
-//                    sendNotification.sendNotification();
+                // Only call onLocationChanged if the status has changed
+                if (lastStatus == null || insideAnyPolygon != lastStatus) {
+                    if (locationListener != null) {
+                        locationListener.onLocationChanged(insideAnyPolygon);
                     }
-
-                    Log.d(TAG, "onLocationResult: " + latitude + " " + longitude);
+                    lastStatus = insideAnyPolygon;
                 }
 
 
@@ -165,7 +159,7 @@ public class LocationService extends Service {
                     i++;
                     String area = areaSnapshot.getValue(String.class);
                     areas.add(area);
-                    break;
+//                    break;
                 }
 
                 getPolygonData(areas);
@@ -217,6 +211,8 @@ public class LocationService extends Service {
                     latLngList.add(latLng);
 
                 }
+
+                polygons.add(latLngList);
 
                 for (int j = 0; j < latLngList.size(); j++) {
                     Log.d(TAG, "onDataChange: getLatLng " + areaName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
