@@ -50,9 +50,10 @@ public class LocationService extends Service {
     private LocationListener locationListener;
     private Boolean lastStatus = null;
     List<List<LatLng>> polygons = new ArrayList<>();
+    List<String> areasName = new ArrayList<>();
 
     public interface LocationListener{
-        void onLocationChanged(boolean inside);
+        void onLocationChanged(boolean inside, String area);
     }
 
     private void setLocationListener(LocationListener locationListener){
@@ -73,7 +74,10 @@ public class LocationService extends Service {
                 saveLocationToFirebase(latitude, longitude);
 
                 boolean insideAnyPolygon = false;
-                for (List<LatLng> polygon : polygons) {
+                String area = "";
+                for (int i = 0; i < polygons.size(); i++) {
+                    List<LatLng> polygon = polygons.get(i);
+                    area = areasName.get(i);
                     if (PolyUtil.containsLocation(currentLocation.latitude, currentLocation.longitude, polygon, true)) {
                         insideAnyPolygon = true;
                         break;
@@ -83,7 +87,7 @@ public class LocationService extends Service {
                 // Only call onLocationChanged if the status has changed
                 if (lastStatus == null || insideAnyPolygon != lastStatus) {
                     if (locationListener != null) {
-                        locationListener.onLocationChanged(insideAnyPolygon);
+                        locationListener.onLocationChanged(insideAnyPolygon, area);
                     }
                     lastStatus = insideAnyPolygon;
                 }
@@ -213,6 +217,7 @@ public class LocationService extends Service {
                 }
 
                 polygons.add(latLngList);
+                areasName.add(areaName);
 
                 for (int j = 0; j < latLngList.size(); j++) {
                     Log.d(TAG, "onDataChange: getLatLng " + areaName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
@@ -240,7 +245,7 @@ public class LocationService extends Service {
 
         setLocationListener(new LocationListener() {
             @Override
-            public void onLocationChanged(boolean inside) {
+            public void onLocationChanged(boolean inside, String area) {
 
                 String accessToken = AccessToken.getAccessToken();
                 String name = sp.getPref("name", getApplicationContext());
@@ -256,11 +261,11 @@ public class LocationService extends Service {
                 SendNotification sendNotification = new SendNotification(accessToken, parentFcmToken, title, body);
 
                 if (inside) {
-                    Log.d(TAG, "onLocationChanged: Inside the polygon");
-                    sendNotification.sendNotification();
+                    Log.d(TAG, "onLocationChanged: Inside the polygon "+ area);
+//                    sendNotification.sendNotification();
                 } else {
-                    Log.d(TAG, "onLocationChanged: Outside the polygon");
-                    sendNotification.sendNotification();
+                    Log.d(TAG, "onLocationChanged: Outside the polygon ");
+//                    sendNotification.sendNotification();
                 }
             }
         });
