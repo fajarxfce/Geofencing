@@ -94,8 +94,7 @@ public class MyBottomSheetDialogFragment extends com.google.android.material.bot
 
                     binding.recyclerView.setAdapter(adapter);
                     adapter.setOnItemClickListener((view, i1) -> {
-                        Toast.makeText(requireContext(), "Clicked : " + childList.get(i1).getId(), Toast.LENGTH_SHORT).show();
-                        assignToChild(childList.get(i1).getId());
+                        assignToChild(childList.get(i1).getId(), childList.get(i1).getName());
                     });
 
                     adapter.setOnItemLongClickListener((view, i12) -> {
@@ -111,12 +110,11 @@ public class MyBottomSheetDialogFragment extends com.google.android.material.bot
             });
     }
 
-    private void assignToChild(String pairCode){
+    private void assignToChild(String pairCode, String childName){
         String areaName = getArguments().getString("area_name");
-        Log.d(TAG, "assignToChild: "+pairCode + " "+ areaName);
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(pairCode).child("areas");
-        Log.d(TAG, "assignToChild: "+DB);
         DB.push().setValue(areaName);
+        Toast.makeText(requireContext(), "Polygon " + areaName +" telah ditambahkan ke  : " + childName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
