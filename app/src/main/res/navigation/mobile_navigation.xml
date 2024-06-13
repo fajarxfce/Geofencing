@@ -83,6 +83,6 @@
     <fragment
         android:id="@+id/childLocationHistoryFragment"
         android:name="com.example.geofencing.ui.home.ChildLocationHistoryFragment"
-        android:label="fragment_child_location_history"
+        android:label="Child Location History"
         tools:layout="@layout/fragment_child_location_history" />
 </navigation>
