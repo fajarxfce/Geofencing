@@ -99,55 +99,6 @@ public class LocationService extends Service {
 
         }
     };
-
-    private LocationCallback locationHistoryCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(@NonNull LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-
-            if (locationResult != null && locationResult.getLastLocation() != null) {
-                double latitude = locationResult.getLastLocation().getLatitude();
-                double longitude = locationResult.getLastLocation().getLongitude();
-
-                LatLng currentLocation = new LatLng(latitude, longitude);
-                KmlUtil kmlUtil = new KmlUtil();
-                boolean inside = PolyUtil.containsLocation(currentLocation, kmlUtil.parseKMLFile(R.raw.contoh, getApplicationContext()), true);
-
-
-
-                if (inside) {
-                    // The current location is inside the polygon
-                    Log.d(TAG, "CHECK_ON_POLYGON: Inside the polygon...");
-
-                } else {
-                    // The current location is outside the polygon
-                    Log.d(TAG, "CHECK_ON_POLYGON: Outside the polygon...");
-                }
-
-                saveLocationHistoryToFirebase(latitude, longitude);
-            }
-        }
-    };
-
-    private void saveLocationHistoryToFirebase(double latitude, double longitude) {
-        Log.d(TAG, "saveLocationHistoryToFirebase: " + latitude + " " + longitude);
-        String pairCode = sp.getPref("pair_code", this);
-        DBHelper.saveLocationHistory(
-                DB,
-                pairCode,
-                new LocationHistory(latitude, longitude)
-        );
-    }
-
-    private void startLocationHistoryService() {
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(300000); // Set interval to 5 minutes
-        locationRequest.setFastestInterval(300000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationHistoryCallback, null);
-    }
-
     private void getAreas(String childId) {
         // Get reference to the areas
         DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
@@ -261,10 +212,12 @@ public class LocationService extends Service {
                 SendNotification sendNotification = new SendNotification(accessToken, parentFcmToken, title, body);
 
                 if (inside) {
-                    Log.d(TAG, "onLocationChanged: Inside the polygon "+ area);
+                    Log.d(TAG, "onLocationChanged test: Inside the polygon "+ area);
 //                    sendNotification.sendNotification();
+                    saveLocationHistoryToFirebase("Your child "+name + " is inside the "+ area);
                 } else {
-                    Log.d(TAG, "onLocationChanged: Outside the polygon ");
+                    Log.d(TAG, "onLocationChanged test: Outside the polygon ");
+                    saveLocationHistoryToFirebase("Your child "+name + " is outside the polygon");
 //                    sendNotification.sendNotification();
                 }
             }
@@ -281,6 +234,18 @@ public class LocationService extends Service {
                 new ChildCoordinat(latitude, longitude),
                 parentId
         );
+
+    }
+
+    private void saveLocationHistoryToFirebase(String message) {
+        Log.d(TAG, "saveLocationToFirebase: " + message);
+        String pairCode = sp.getPref("pair_code", this);
+        String parentId = sp.getPref("parent_id", this);
+
+        DBHelper.saveLocationHistory2(
+                DB,
+                pairCode,
+                message);
 
     }
 
@@ -337,7 +302,7 @@ public class LocationService extends Service {
             if (action != null) {
                 if (action.equals(Contstants.ACTION_START_LOCATION_SERVICE)) {
                     startLocationService();
-                    startLocationHistoryService();
+//                    startLocationHistoryService();
                 } else if (action.equals(Contstants.ACTION_STOP_LOCATION_SERVICE)) {
                     stopLocationService();
                 }

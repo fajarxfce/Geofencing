@@ -39,6 +39,11 @@ public class DBHelper {
         Log.d(TAG, "saveLocationHistory: saved");
     }
 
+    public static void saveLocationHistory2(DatabaseReference db, String pairCode, String message) {
+        db.child("location_history").child(pairCode).push().setValue(message);
+        Log.d(TAG, "saveLocationHistory: saved");
+    }
+
     public static void saveCurrentLocation(DatabaseReference DB, String pairCode, ChildCoordinat coordinat, String parentId) {
 
         Map<String, Object> updates = new HashMap<>();
