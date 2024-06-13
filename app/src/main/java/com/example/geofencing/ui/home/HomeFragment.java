@@ -19,6 +19,7 @@ import com.example.geofencing.R;
 import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentHomeBinding;
 import com.example.geofencing.dialog.ChildCodeDialog;
+import com.example.geofencing.dialog.ChildOptionDialog;
 import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.model.Child;
 import com.google.firebase.auth.FirebaseAuth;
@@ -100,13 +101,18 @@ public class HomeFragment extends Fragment {
                     bundle.putString("name", childList.get(i1).getName());
 //                    ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
 //                    childCodeDialog.show(getParentFragmentManager(), "child_code");
-                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_trackChildMapsFragment, bundle);
+//                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_trackChildMapsFragment, bundle);
+                    ChildOptionDialog childOptionDialog = new ChildOptionDialog(view, childList.get(i1).getId(), childList.get(i1).getName());
+                    childOptionDialog.show(getParentFragmentManager(), "child_option");
                 });
 
-                adapter.setOnItemLongClickListener((view, i12) -> {
-                    DeleteChildDialog deleteChildDialog = new DeleteChildDialog(childList.get(i12).getId(), childList.get(i12).getName());
-                    deleteChildDialog.show(getParentFragmentManager(), "delete_child");
-                });
+//                adapter.setOnItemLongClickListener((view, i12) -> {
+//                    String id = childList.get(i12).getId();
+//                    String name = childList.get(i12).getName();
+//
+//                    DeleteChildDialog deleteChildDialog = new DeleteChildDialog(id, name);
+//                    deleteChildDialog.show(getParentFragmentManager(), "delete_child");
+//                });
             }
 
             @Override
@@ -115,4 +121,9 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+    private void showChildOptionDialog() {
+        Toast.makeText(requireContext(), "Option", Toast.LENGTH_SHORT).show();
+    }
+
 }
