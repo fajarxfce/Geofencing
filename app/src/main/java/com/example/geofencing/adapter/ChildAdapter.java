@@ -53,7 +53,9 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
         holder.binding.tvPairkey.setText(childList.get(position).getPairkey());
         holder.binding.getRoot().setOnClickListener(v -> listener.onItemClick(v, position));
         holder.binding.getRoot().setOnLongClickListener(v -> {
-            longClickListener.onItemLongClick(v, position);
+            if (longClickListener != null) {
+                longClickListener.onItemLongClick(v, position);
+            }
             return true;
         });
 
