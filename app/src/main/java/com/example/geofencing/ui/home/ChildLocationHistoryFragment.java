@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ChildLocationHistoryFragment extends Fragment {
@@ -74,13 +75,15 @@ public class ChildLocationHistoryFragment extends Fragment {
 
                     historyList.add(new ChildLocationHistory(message));
 
-                    ChildLocationHistoryAdapter adapter = new ChildLocationHistoryAdapter(historyList);
-                    binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                    binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
-                    binding.recyclerView.setAdapter(adapter);
-
                     Log.d(TAG, "onDataChange: "+message);
                 }
+
+                Collections.reverse(historyList);
+
+                ChildLocationHistoryAdapter adapter = new ChildLocationHistoryAdapter(historyList);
+                binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
+                binding.recyclerView.setAdapter(adapter);
             }
 
             @Override
