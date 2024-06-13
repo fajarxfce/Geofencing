@@ -19,4 +19,6 @@
     <string name="save">Save</string>
     <string name="map">Maps</string>
     <string name="maps">Maps</string>
+    <string name="enter_email">Masukkan Email</string>
+    <string name="reset">Reset</string>
 </resources>

@@ -15,6 +15,7 @@ import com.example.geofencing.MainActivity;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityLoginBinding;
 import com.example.geofencing.dialog.EnterPairCodeDialog;
+import com.example.geofencing.dialog.ForgotPasswordDialog;
 import com.example.geofencing.ui.child.ChildActivity;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,6 +70,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         binding.btnPairCode.setOnClickListener(v -> createDialog());
+        binding.txtForgotPassword.setOnClickListener(v -> {
+            forgotPassword();
+        });
     }
 
     // On click action override
@@ -81,6 +85,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signUp();
         }
     }
+
+    private void forgotPassword() {
+
+        ForgotPasswordDialog dialog = new ForgotPasswordDialog();
+        dialog.show(getSupportFragmentManager(), "ForgotPasswordDialog");
+    }
+
+
 
     private void createDialog() {
         EnterPairCodeDialog dialog = new EnterPairCodeDialog();
