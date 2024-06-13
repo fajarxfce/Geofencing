@@ -40,14 +40,14 @@ public class ListAreaFragment extends Fragment {
 
         binding = FragmentListAreaBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        setupRecyclerView();
+
         return root;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        setupRecyclerView();
         setupEventListener();
     }
 
@@ -63,6 +63,10 @@ public class ListAreaFragment extends Fragment {
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (!isAdded()){
+                    return;
+                }
                 List<Area> areaList = new ArrayList<>();
 
                 int i = 0;

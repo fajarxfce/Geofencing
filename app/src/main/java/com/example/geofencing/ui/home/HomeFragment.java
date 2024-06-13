@@ -70,6 +70,10 @@ public class HomeFragment extends Fragment {
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (!isAdded()){
+                    return;
+                }
                 List<Child> childList = new ArrayList<>();
 
                 int i = 0;
