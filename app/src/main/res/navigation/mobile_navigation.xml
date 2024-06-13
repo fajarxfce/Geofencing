@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_navigation_home_to_trackChildMapsFragment"
             app:destination="@id/trackChildMapsFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_childLocationHistoryFragment"
+            app:destination="@id/childLocationHistoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/addChildFragment"
@@ -77,4 +80,9 @@
             android:id="@+id/action_trackChildMapsFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
     </fragment>
+    <fragment
+        android:id="@+id/childLocationHistoryFragment"
+        android:name="com.example.geofencing.ui.home.ChildLocationHistoryFragment"
+        android:label="fragment_child_location_history"
+        tools:layout="@layout/fragment_child_location_history" />
 </navigation>

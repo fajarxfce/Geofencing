@@ -37,20 +37,22 @@ public class ChildOptionDialog extends DialogFragment {
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         String[] options = {"Lihat Lokasi Anak", "Lihat Riwayat Lokasi", "Hapus Anak"};
+
+        Bundle bundle = new Bundle();
+        bundle.putString("id", this.id);
+        bundle.putString("name", this.name);
+
         builder.setItems(options, (dialog, which) -> {
             switch (which) {
                 case 0:
                     // Lihat Lokasi Anak
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", this.id);
-                    bundle.putString("name", this.name);
+
 
                     Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_trackChildMapsFragment, bundle);
                     break;
                 case 1:
                     // Lihat Riwayat Lokasi
-                    Toast.makeText(getActivity(), "Lihat Riwayat Lokasi",
-                            Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_childLocationHistoryFragment, bundle);
                     break;
                 case 2:
                     // Hapus Anak
