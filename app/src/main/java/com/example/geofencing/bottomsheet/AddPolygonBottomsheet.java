@@ -79,6 +79,10 @@ public class AddPolygonBottomsheet extends BottomSheetDialogFragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Child> childList = new ArrayList<>();
 
+                if (!isAdded()){
+                    return;
+                }
+
                 int i = 0;
                 List<Area> areaList = new ArrayList<>();
 
