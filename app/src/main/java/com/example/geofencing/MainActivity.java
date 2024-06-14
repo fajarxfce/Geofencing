@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                         String msg = "FCM Registration token: " + token;
                         DBHelper.saveParentToken(DB, user, token);
                         Log.d(TAG, msg);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
         // [END log_reg_token]
