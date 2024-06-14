@@ -36,7 +36,7 @@ public class ChildOptionDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        String[] options = {"Lihat Lokasi Anak", "Lihat Riwayat Lokasi", "Hapus Anak"};
+        String[] options = {"Lihat Lokasi Anak", "Lihat Riwayat Lokasi", "Polygon", "Hapus Anak"};
 
         Bundle bundle = new Bundle();
         bundle.putString("id", this.id);
@@ -55,6 +55,11 @@ public class ChildOptionDialog extends DialogFragment {
                     Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_childLocationHistoryFragment, bundle);
                     break;
                 case 2:
+                    // List Polygon
+                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_listChildPolygonFragment, bundle);
+
+                    break;
+                case 3:
                     // Hapus Anak
                     new DeleteChildDialog(this.id, this.name).show(getParentFragmentManager(), "delete_child");
                     break;
