@@ -100,7 +100,8 @@ public class DetailAreaFragment extends Fragment {
                 }
             });
 
-            binding.addChild.setOnClickListener(v -> showAddChildDialog());
+//            binding.addChild.setOnClickListener(v -> showAddChildDialog());
+            binding.addChild.setVisibility(View.GONE);
 
             enableUserLocation();
         }
