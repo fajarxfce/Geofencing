@@ -18,6 +18,7 @@ import com.example.geofencing.Config;
 import com.example.geofencing.R;
 import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.adapter.ListChildPolygonAdapter;
+import com.example.geofencing.bottomsheet.AddPolygonBottomsheet;
 import com.example.geofencing.databinding.FragmentListChildPolygonBinding;
 import com.example.geofencing.dialog.ChildOptionDialog;
 import com.example.geofencing.model.Child;
@@ -58,7 +59,13 @@ public class ListChildPolygonFragment extends Fragment {
     }
 
     private void addPolygon() {
+        String pairCode = getArguments().getString("id");
 
+        Bundle bundle = new Bundle();
+        bundle.putString("id", pairCode);
+        AddPolygonBottomsheet addPolygonBottomsheet = new AddPolygonBottomsheet();
+        addPolygonBottomsheet.setArguments(bundle);
+        addPolygonBottomsheet.show(getParentFragmentManager(), addPolygonBottomsheet.getTag());
     }
 
     private void setupRecyclerView() {

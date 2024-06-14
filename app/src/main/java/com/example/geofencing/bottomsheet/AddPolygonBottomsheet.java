@@ -10,11 +10,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.Config;
+import com.example.geofencing.adapter.AreaAdapter;
 import com.example.geofencing.adapter.ChildAdapter;
+import com.example.geofencing.databinding.AddChildPolygonBottomsheetBinding;
 import com.example.geofencing.databinding.FragmentBottomsheetDialogBinding;
+import com.example.geofencing.model.Area;
 import com.example.geofencing.model.Child;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,9 +33,9 @@ import java.util.List;
 
 public class AddPolygonBottomsheet extends BottomSheetDialogFragment {
 
-    private static final String TAG = "MyBottomSheetDialogFragment";
+    private static final String TAG = "AddPolygonBottomsheet";
     private DatabaseReference DB;
-    FragmentBottomsheetDialogBinding binding;
+    AddChildPolygonBottomsheetBinding binding;
 
     @NonNull
     @Override
@@ -42,7 +46,7 @@ public class AddPolygonBottomsheet extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentBottomsheetDialogBinding.inflate(inflater, container, false);
+        binding = AddChildPolygonBottomsheetBinding.inflate(inflater, container, false);
 
         return binding.getRoot();
     }
@@ -66,33 +70,40 @@ public class AddPolygonBottomsheet extends BottomSheetDialogFragment {
     private void getAllPolygon() {
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String pairCode = getArguments().getString("id");
 
         // Get data from db
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/childs");
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/areas");
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Child> childList = new ArrayList<>();
 
                 int i = 0;
+                List<Area> areaList = new ArrayList<>();
+
                 for (DataSnapshot clidSnapshot : dataSnapshot.getChildren()) {
                     i++;
 
-                    Log.d(TAG, "onDataChange: " + clidSnapshot.getKey());
-
-                    childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
+                    areaList.add(new Area(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
                 }
 
-                ChildAdapter adapter = new ChildAdapter(childList);
+                for (int j = 0; j < areaList.size(); j++) {
+                    Log.d(TAG, "onDataChange: "+areaList.get(j).getName());
+                }
 
+                AreaAdapter adapter = new AreaAdapter(areaList);
+                binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
+
                 adapter.setOnItemClickListener((view, i1) -> {
-                    assignToChild(childList.get(i1).getId(), childList.get(i1).getName());
+                    final Bundle bundle = new Bundle();
+                    bundle.putString("id", areaList.get(i1).getId());
+                    bundle.putString("area_name", areaList.get(i1).getName());
+                    assignToChild(pairCode, areaList.get(i1).getName());
                 });
 
-                adapter.setOnItemLongClickListener((view, i12) -> {
-
-                });
 
             }
 
@@ -103,11 +114,10 @@ public class AddPolygonBottomsheet extends BottomSheetDialogFragment {
         });
     }
 
-    private void assignToChild(String pairCode, String childName) {
-        String areaName = getArguments().getString("area_name");
+    private void assignToChild(String pairCode, String areaName) {
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(pairCode).child("areas");
         DB.push().setValue(areaName);
-        Toast.makeText(requireContext(), "Polygon " + areaName + " telah ditambahkan ke  : " + childName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Polygon " + areaName + " telah ditambahkan ", Toast.LENGTH_SHORT).show();
     }
 
     @Override

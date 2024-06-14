@@ -91,6 +91,6 @@
     <fragment
         android:id="@+id/listChildPolygonFragment"
         android:name="com.example.geofencing.ui.home.ListChildPolygonFragment"
-        android:label="fragment_list_child_polygon"
+        android:label="List Child Polygon"
         tools:layout="@layout/fragment_list_child_polygon" />
 </navigation>

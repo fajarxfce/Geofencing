@@ -21,4 +21,5 @@
     <string name="maps">Maps</string>
     <string name="enter_email">Masukkan Email</string>
     <string name="reset">Reset</string>
+    <string name="pilih_polygon">Pilih Polygon</string>
 </resources>
