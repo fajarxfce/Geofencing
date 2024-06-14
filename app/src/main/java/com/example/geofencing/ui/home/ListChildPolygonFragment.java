@@ -1,9 +1,11 @@
 package com.example.geofencing.ui.home;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -88,8 +90,10 @@ public class ListChildPolygonFragment extends Fragment {
                     i++;
 
                     String area = clidSnapshot.getValue(String.class);
+                    String key = clidSnapshot.getKey();
 
-                    listChildPolygons.add(new ListChildPolygon(area));
+                    Log.d(TAG, "onDataChange: "+clidSnapshot.getKey());
+                    listChildPolygons.add(new ListChildPolygon(key, area));
 
                 }
 
@@ -99,7 +103,7 @@ public class ListChildPolygonFragment extends Fragment {
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
 
-                    Toast.makeText(requireContext(), listChildPolygons.get(i1).getName(), Toast.LENGTH_SHORT).show();
+                    showDeleteConfirmationDialog(listChildPolygons.get(i1).getKey(), pairCode);
                 });
 
             }
@@ -107,6 +111,40 @@ public class ListChildPolygonFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("Error", databaseError.getMessage());
+            }
+        });
+    }
+
+    private void showDeleteConfirmationDialog(String key, String pairCode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Hapus Area");
+        builder.setMessage("Apakah Anda yakin ingin menghapus area ini?");
+
+        builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeFromChild(key, pairCode);
+            }
+        });
+        builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog, do nothing
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private  void removeFromChild(String key, String pairCode){
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode + "/areas");
+
+        Log.d(TAG, "removeFromChild: "+key);
+
+        DB.child(key).removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                Toast.makeText(requireContext(), "Berhasil menghapus area", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(requireContext(), "Gagal menghapus area", Toast.LENGTH_SHORT).show();
             }
         });
     }
