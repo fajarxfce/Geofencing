@@ -37,7 +37,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class LocationService extends Service {
@@ -198,27 +200,36 @@ public class LocationService extends Service {
             @Override
             public void onLocationChanged(boolean inside, String area) {
 
+                // Membuat objek Date untuk mendapatkan waktu saat ini
+                Date now = new Date();
+
+                // Membuat objek SimpleDateFormat untuk mengubah format Date menjadi string
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                // Mengubah Date menjadi string dengan format yang telah ditentukan
+                String timestamp = formatter.format(now);
+
                 String accessToken = AccessToken.getAccessToken();
                 String name = sp.getPref("name", getApplicationContext());
                 String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
                 String body = "";
                 String title = "Location Service";
                 if (inside){
-                    body = "Your child "+name + " is inside the polygon";
+                    body = "[ "+timestamp +" ]"+ " : Your child "+name + " is inside the polygon "+area;
                 } else {
-                    body = "Your child" + name + " is outside the polygon";
+                    body = "[ "+timestamp + " ]"+" : Your child " + name + " is outside the polygon";
                 }
 
                 SendNotification sendNotification = new SendNotification(accessToken, parentFcmToken, title, body);
 
                 if (inside) {
-                    Log.d(TAG, "onLocationChanged test: Inside the polygon "+ area);
-//                    sendNotification.sendNotification();
-                    saveLocationHistoryToFirebase("Your child "+name + " is inside the "+ area);
+                    Log.d(TAG, "onLocationChanged test: "+name+" Inside the polygon "+ area);
+                    sendNotification.sendNotification();
+                    saveLocationHistoryToFirebase("[ "+timestamp +" ]"+ " Your child "+name + " is inside the "+ area);
                 } else {
-                    Log.d(TAG, "onLocationChanged test: Outside the polygon ");
-                    saveLocationHistoryToFirebase("Your child "+name + " is outside the polygon");
-//                    sendNotification.sendNotification();
+                    Log.d(TAG, "onLocationChanged test: "+name+" Outside the polygon ");
+                    saveLocationHistoryToFirebase("[ "+timestamp +" ]"+ " Your child "+name + " is outside the polygon");
+                    sendNotification.sendNotification();
                 }
             }
         });

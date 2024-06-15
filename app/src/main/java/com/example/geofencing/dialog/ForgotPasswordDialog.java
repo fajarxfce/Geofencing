@@ -62,14 +62,17 @@ public class ForgotPasswordDialog extends DialogFragment {
         Auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(requireContext(), "Email terkirim, silahkan cek email anda",
+                        Toast.makeText(requireContext(), "Email terkirim jika terdaftar, silahkan cek email anda",
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(requireContext(), "Gagal mengirim email, silahkan coba lagi!",
                                 Toast.LENGTH_SHORT).show();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Gagal mengirim email, silahkan coba lagi!",
+                            Toast.LENGTH_SHORT).show();
                 });
-
 
     }
 

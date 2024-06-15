@@ -24,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             // Intent is used to switch from one activity to another.
-            Intent i = new Intent(SplashScreenActivity.this, LoginActivity.class);
+            Intent i = new Intent(SplashScreenActivity.this, WelcomeActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i); // invoke the SecondActivity.
             finish(); // the current activity will get finished.

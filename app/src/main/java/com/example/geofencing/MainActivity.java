@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Log and toast
                         String msg = "FCM Registration token: " + token;
+                        //simpan fcm token punya orang tua ke firebase
                         DBHelper.saveParentToken(DB, user, token);
                         Log.d(TAG, msg);
 //                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();

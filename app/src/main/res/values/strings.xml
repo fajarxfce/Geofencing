@@ -22,4 +22,8 @@
     <string name="enter_email">Masukkan Email</string>
     <string name="reset">Reset</string>
     <string name="pilih_polygon">Pilih Polygon</string>
+    <string name="login_sebagai_orang_tua">Login sebagai orang tua</string>
+    <string name="login_sebagai_anak">Login sebagai anak</string>
+    <string name="hubungkan_dengan_orang_tua">Hubungkan dengan orang tua</string>
+    <string name="masukkan_pair_code">Masukkan pair code</string>
 </resources>
