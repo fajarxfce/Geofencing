@@ -21,13 +21,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SendNotification {
-    private static final String TAG = "CekNotification";
+    private static final String TAG = "SendNotification";
 
     private final String accessToken;
     private final String userFcmToken;
     private final String title;
     private final String body;
-    private final String postUrl = "https://fcm.googleapis.com/v1/projects/geofencing-dbb5e/messages:send";
+    private final String postUrl = "https://fcm.googleapis.com/v1/projects/geofencing-new/messages:send";
 
     public SendNotification(String accessToken, String userFcmToken, String title, String body) {
         this.accessToken = accessToken;
@@ -71,9 +71,9 @@ public class SendNotification {
                 try {
                     Response response = client.newCall(request).execute();
 
-                    Log.d("GGWP", response.toString());
+                    Log.d(TAG, response.toString());
                 } catch (IOException e) {
-                    Log.d("FCM ERROR", e.toString());
+                    Log.d(TAG, e.toString());
                 }
 
                 return null;

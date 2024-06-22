@@ -114,6 +114,8 @@ public class ChildActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getLastLocation();
 
+        Log.d(TAG, "onCreate: "+AccessToken.getAccessToken());
+
 //        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), "fK4ryQCpS6O2AFit8GmVII:APA91bE4CFhHyCR_fC7LrTqXXsPiKDcfaFBhaWXHR8lzEZtFblTjexkpM2fV2D4FIOgv2Pxb_lhcQsHoKmXNqLeL7BgeL6h79XClICAIKj7D0zU31-iVcEE0Sb-rfF---nXUFAY_iCYx",
 //                "Location Service", "You are outside the polygon");
 //        sendNotification.sendNotification();
