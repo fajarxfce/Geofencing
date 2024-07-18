@@ -94,10 +94,10 @@ public class ChildActivity extends AppCompatActivity {
 //            addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, ChildActivity.this));
 
 
-            String childId = sf.getPref("pair_code", ChildActivity.this);
+//            String childId = sf.getPref("pair_code", ChildActivity.this);
             enableUserLocation();
 
-            getAreas(childId);
+//            getAreas(childId);
 
 
         }
@@ -112,6 +112,9 @@ public class ChildActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 //        retrieveFcmToken();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        binding.fabInfo.setOnClickListener(v -> {
+            createInfoDialog();
+        });
         getLastLocation();
 
         Log.d(TAG, "onCreate: "+AccessToken.getAccessToken());
@@ -134,8 +137,12 @@ public class ChildActivity extends AppCompatActivity {
                     Contstants.REQUEST_CODE_LOCATION_PERMISSION
             );
         } else {
-            startLocationService();
+//            startLocationService();
         }
+
+    }
+
+    private void createInfoDialog() {
 
     }
 

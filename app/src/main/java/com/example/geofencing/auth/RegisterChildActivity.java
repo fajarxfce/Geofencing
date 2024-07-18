@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Random;
+
 public class RegisterChildActivity extends AppCompatActivity {
 
     ActivityRegisterChildBinding binding;
@@ -55,9 +57,14 @@ public class RegisterChildActivity extends AppCompatActivity {
     private void onAuthSuccess(FirebaseUser user) {
         String name = StringHelper.usernameFromEmail(user.getEmail());
 
+        Random rnd = new Random();
+        int number = rnd.nextInt(999999);
+
+        String pairkey = String.format("%06d", number);
+
         // Create User If Not Exist
-        DBHelper.saveUserChild(DB, user.getUid(), name, user.getEmail());
-        DBHelper.saveChildCode(DB, user.getUid());
+        DBHelper.saveUserChild(DB, user.getUid(), name, user.getEmail(), pairkey);
+        DBHelper.saveChildCode(DB, pairkey, user.getUid());
 
         // Make alert
         Toast.makeText(this, "Daftar berhasil ! Silakan login",

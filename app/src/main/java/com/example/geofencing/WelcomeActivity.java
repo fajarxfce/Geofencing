@@ -41,13 +41,28 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         // Check if user is logged in
         if (Auth.getCurrentUser() != null) {
+
+            if (sf.getPref("account_type", WelcomeActivity.this) != null){
+                if (sf.getPref("account_type", WelcomeActivity.this).equals("parent")){
+                    Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else if (sf.getPref("account_type", WelcomeActivity.this).equals("child")){
+                    Intent intent = new Intent(WelcomeActivity.this, ChildActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
             Toast.makeText(WelcomeActivity.this, "Already logged in",
                     Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//            finish();
         }
 
         binding.btnLoginAsParent.setOnClickListener(v -> {

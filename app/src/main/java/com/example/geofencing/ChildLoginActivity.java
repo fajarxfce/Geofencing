@@ -2,6 +2,7 @@ package com.example.geofencing;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,11 +13,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.geofencing.auth.LoginActivity;
 import com.example.geofencing.auth.RegisterChildActivity;
 import com.example.geofencing.databinding.ActivityChildLoginBinding;
+import com.example.geofencing.helper.StringHelper;
 import com.example.geofencing.model.ChildData;
 import com.example.geofencing.ui.child.ChildActivity;
 import com.example.geofencing.util.SharedPreferencesUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,17 +34,21 @@ public class ChildLoginActivity extends AppCompatActivity {
     SharedPreferencesUtil sf;
     private DatabaseReference DB;
     ActivityChildLoginBinding binding;
+    private FirebaseAuth Auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityChildLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        Auth = FirebaseAuth.getInstance();
 
         sf = new SharedPreferencesUtil(ChildLoginActivity.this);
 
         binding.login.setOnClickListener(v -> {
-
+            if (!validateForm()) return;
+            login();
         });
 
         binding.register.setOnClickListener(v -> {
@@ -49,46 +58,67 @@ public class ChildLoginActivity extends AppCompatActivity {
 
     }
 
-//    private void validatePairCode() {
-//        String pairCode = binding.pairCode.getText().toString().trim();
-//        if (pairCode.isEmpty()) {
-//            binding.pairCode.setError("Pair code is required");
-//            return;
-//        }
-//
-//        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode);
-//
-//        DB.addListenerForSingleValueEvent(new ValueEventListener()  {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists()) {
-//
-//                    ChildData childData = snapshot.getValue(ChildData.class);
-//                    // Execute
-//                    Toast.makeText(ChildLoginActivity.this, "Pair code is valid", Toast.LENGTH_SHORT).show();
-//
-//                    if (childData != null) {
-//                        Log.d(TAG, "onDataChange: "+childData.getName().toString());
-//                        Log.d(TAG, "onDataChange: "+childData.getPairKey().toString());
-//                        Log.d(TAG, "onDataChange: "+childData.getParentId().toString());
-//                        sf.setPref("pair_code", pairCode, ChildLoginActivity.this);
-//                        sf.setPref("name", childData.getName().toString(), ChildLoginActivity.this);
-//                        sf.setPref("pair_key", childData.getPairKey().toString(), ChildLoginActivity.this);
-//                        sf.setPref("parent_id", childData.getParentId().toString(), ChildLoginActivity.this);
-//
-//                        Intent intent = new Intent(ChildLoginActivity.this, ChildActivity.class);
-//                        startActivity(intent);
-//                    }
-//
-//                }else {
-//                    Toast.makeText(ChildLoginActivity.this, "Pair code is invalid", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//    }
+    private void login() {
+        if (!validateForm()) return;
+
+        String email = binding.txtEmail.getText().toString();
+        String password = binding.txtPassword.getText().toString();
+
+        Auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        onAuthSuccess(task.getResult().getUser());
+                    } else {
+                        Toast.makeText(this, "Sign In Failed",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    private void onAuthSuccess(FirebaseUser user) {
+        // Create User If Not Exist
+//        DBHelper.saveUser(DB, user.getUid(), name, user.getEmail());
+        sf.setPref("account_type", "child", ChildLoginActivity.this);
+
+        // Make alert
+        Toast.makeText(this, "Sign In Success !",
+                Toast.LENGTH_SHORT).show();
+
+        // Move to Main Activity
+        startActivity(new Intent(ChildLoginActivity.this, ChildActivity.class));
+        finish();
+    }
+
+    private boolean validateForm() {
+        boolean result = true;
+        if (TextUtils.isEmpty(binding.txtEmail.getText().toString())) {
+            binding.txtEmail.setError("Required");
+            result = false;
+        } else {
+            binding.txtEmail.setError(null);
+        }
+
+        if (TextUtils.isEmpty(binding.txtPassword.getText().toString())) {
+            binding.txtPassword.setError("Required");
+            result = false;
+        } else {
+            binding.txtPassword.setError(null);
+        }
+
+        // Min 6
+        if (binding.txtPassword.getText().toString().length() < 6) {
+            Toast.makeText(this, "Password min 6 character",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        // Must contain @
+        if (!binding.txtEmail.getText().toString().contains("@")) {
+            Toast.makeText(this, "Email does not comply with the conditions",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        return result;
+    }
+
 }

@@ -8,11 +8,12 @@ import com.example.geofencing.Config;
 import com.example.geofencing.model.ChildCoordinat;
 import com.example.geofencing.model.ChildFirebase;
 import com.example.geofencing.model.LocationHistory;
+import com.example.geofencing.model.UserChild;
+import com.example.geofencing.model.UserParent;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.example.geofencing.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -27,31 +28,25 @@ public class DBHelper {
     private static String childName, childParentId, childPairKey;
 
     public static void saveUser(DatabaseReference DB, String userId, String name, String email) {
-        User user = new User(name, email);
+        UserParent user = new UserParent(name, email);
 
         DB.child("users")
                 .child(userId)
                 .setValue(user);
     }
 
-    public static void saveUserChild(DatabaseReference DB, String userId, String name, String email) {
-        User user = new User(name, email);
+    public static void saveUserChild(DatabaseReference DB, String userId, String name, String email, String pairKey) {
+        UserChild userChild = new UserChild(name, email, pairKey);
 
         DB.child("childs")
                 .child(userId)
-                .setValue(user);
+                .setValue(userChild);
     }
 
-    public static void saveChildCode(DatabaseReference db, String childId) {
-        Random rnd = new Random();
-        int number = rnd.nextInt(999999);
+    public static void saveChildCode(DatabaseReference db, String pairKey, String childId) {
 
-        String pairkey = String.format("%06d", number);
-        HashMap<String, String> data = new HashMap<>();
-        data.put("anjay", "mabar");
+        db.child("child_pair_code").child(pairKey).setValue(childId);
 
-        db.child("child_pair_code").child(pairkey).setValue(childId);
-        Log.d(TAG, "saveLocationHistory: saved");
     }
 
     public static void saveLocationHistory(DatabaseReference db, String pairCode, LocationHistory location) {
