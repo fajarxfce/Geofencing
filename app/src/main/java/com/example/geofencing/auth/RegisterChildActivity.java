@@ -15,6 +15,8 @@ import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityRegisterChildBinding;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.helper.StringHelper;
+import com.example.geofencing.model.ChildPairCode;
+import com.example.geofencing.model.UserChild;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -61,10 +63,11 @@ public class RegisterChildActivity extends AppCompatActivity {
         int number = rnd.nextInt(999999);
 
         String pairkey = String.format("%06d", number);
+        ChildPairCode userChild = new ChildPairCode(name, user.getEmail(), user.getUid());
 
         // Create User If Not Exist
         DBHelper.saveUserChild(DB, user.getUid(), name, user.getEmail(), pairkey);
-        DBHelper.saveChildCode(DB, pairkey, user.getUid());
+        DBHelper.saveChildCode(DB, pairkey, userChild);
 
         // Make alert
         Toast.makeText(this, "Daftar berhasil ! Silakan login",

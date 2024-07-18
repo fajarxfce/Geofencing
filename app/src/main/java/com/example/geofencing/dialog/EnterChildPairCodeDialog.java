@@ -18,6 +18,7 @@ import com.example.geofencing.Config;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.DialogEnterChildPaircodeBinding;
 import com.example.geofencing.helper.DBHelper;
+import com.example.geofencing.model.ChildPairCode;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,18 +75,22 @@ public class EnterChildPairCodeDialog extends DialogFragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    String childId = snapshot.getValue(String.class);
-                    Log.d(TAG, "onDataChange: childId: " + childId);
-                    saveChild(userId, childId);
+                    String childUid = snapshot.child("childId").getValue(String.class);
+                    String email = snapshot.child("email").getValue(String.class);
+                    String username = snapshot.child("username").getValue(String.class);
+
+                    ChildPairCode childPairCode = new ChildPairCode(username, email, childUid);
+
+                    DBHelper.saveChildToParent(DB, userId,pairCode, childPairCode);
 
                 } else {
-//                    Toast.makeText(EnterChildPairCodeDialog.this.getActivity(), "Invalid pair code", Toast.LENGTH_SHORT).show();
+                    binding.txtAreaName.setError("Pair code not found");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(getActivity(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -96,10 +101,6 @@ public class EnterChildPairCodeDialog extends DialogFragment {
         Toast.makeText(getActivity(), "Child saved", Toast.LENGTH_SHORT).show();
         dismiss();
 
-    }
-
-    private void saveChild(String uid, String childUid) {
-        DBHelper.saveChildToParent(DB, uid,childUid);
     }
 
     @Override

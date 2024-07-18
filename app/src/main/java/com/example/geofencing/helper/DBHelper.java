@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.example.geofencing.Config;
 import com.example.geofencing.model.ChildCoordinat;
 import com.example.geofencing.model.ChildFirebase;
+import com.example.geofencing.model.ChildPairCode;
 import com.example.geofencing.model.LocationHistory;
 import com.example.geofencing.model.UserChild;
 import com.example.geofencing.model.UserParent;
@@ -43,9 +44,11 @@ public class DBHelper {
                 .setValue(userChild);
     }
 
-    public static void saveChildCode(DatabaseReference db, String pairKey, String childId) {
+    public static void saveChildCode(DatabaseReference db, String pairKey, ChildPairCode userChild) {
 
-        db.child("child_pair_code").child(pairKey).setValue(childId);
+        db.child("child_pair_code")
+                .child(pairKey)
+                .setValue(userChild);
 
     }
 
@@ -87,12 +90,12 @@ public class DBHelper {
                 .push().setValue(fcmToken);
     }
 
-    public static void saveChildToParent(DatabaseReference DB, String parentId, String childUid){
+    public static void saveChildToParent(DatabaseReference DB, String parentId, String pairCode, ChildPairCode childPairCode){
         DB.child("users")
                 .child(parentId)
                 .child("childs")
-                .child(childUid)
-                .setValue(childUid);
+                .child(pairCode)
+                .setValue(childPairCode);
     }
 
     public static void saveChild(DatabaseReference DB, String parentId, String name) {
