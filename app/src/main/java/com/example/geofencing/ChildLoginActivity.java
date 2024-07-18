@@ -68,6 +68,7 @@ public class ChildLoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         onAuthSuccess(task.getResult().getUser());
+                        sf.setPref("pair_code", Auth.getUid(), ChildLoginActivity.this);
                     } else {
                         Toast.makeText(this, "Sign In Failed",
                                 Toast.LENGTH_SHORT).show();

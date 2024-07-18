@@ -82,6 +82,7 @@ public class EnterChildPairCodeDialog extends DialogFragment {
                     ChildPairCode childPairCode = new ChildPairCode(username, email, childUid);
 
                     DBHelper.saveChildToParent(DB, userId,pairCode, childPairCode);
+                    DBHelper.saveParentToChild(DB, childUid, userId);
 
                 } else {
                     binding.txtAreaName.setError("Pair code not found");

@@ -98,6 +98,14 @@ public class DBHelper {
                 .setValue(childPairCode);
     }
 
+    public static void saveParentToChild(DatabaseReference DB, String childId, String parentId){
+        DB.child("childs")
+                .child(childId)
+                .child("parents")
+                .child(parentId)
+                .setValue(parentId);
+    }
+
     public static void saveChild(DatabaseReference DB, String parentId, String name) {
         childName = name;
         childParentId = parentId;

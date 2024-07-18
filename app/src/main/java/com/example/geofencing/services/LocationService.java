@@ -113,8 +113,10 @@ public class LocationService extends Service {
     };
 
     private void getAreas(String childId) {
+        Log.d(TAG, "getAreas: "+childId);
         // Get reference to the areas
         DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
+        Log.d(TAG, "getAreas: called");
 
         areasRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -126,11 +128,12 @@ public class LocationService extends Service {
                 for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
                     i++;
                     String area = areaSnapshot.getValue(String.class);
+                    Log.d(TAG, "onDataChange: "+area);
                     areas.add(area);
 //                    break;
                 }
 
-                getPolygonData(areas);
+//                getPolygonData(areas);
             }
 
             @Override
@@ -231,6 +234,7 @@ public class LocationService extends Service {
         sp = new SharedPreferencesUtil(this);
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         String pairCode = sp.getPref("pair_code", this);
+        Log.d(TAG, "onCreate: paircode "+pairCode);
         getAreas(pairCode);
         getFcmToken();
 
