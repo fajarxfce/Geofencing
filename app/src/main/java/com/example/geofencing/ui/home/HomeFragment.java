@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
 //                        Log.d(TAG, "onDataChange: have lat lng" + i + " " + clidSnapshot.getKey() + " " + clidSnapshot.child("name").getValue(String.class) + " " + lat + " " + lng);
 //                    }
 
-                    childList.add(new ChildPairCode(clidSnapshot.getKey(), username, email));
+                    childList.add(new ChildPairCode(clidSnapshot.getKey(), username, childId));
                 }
 
                 ChildAdapter adapter = new ChildAdapter(childList);
