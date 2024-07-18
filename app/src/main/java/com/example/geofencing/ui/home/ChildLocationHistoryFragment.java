@@ -56,9 +56,9 @@ public class ChildLocationHistoryFragment extends Fragment {
 
     private void setupRecyclerView() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
+        String childId = getArguments().getString("id");
         // Get data from db
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("location_history/121347");
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("location_history/"+childId);
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
