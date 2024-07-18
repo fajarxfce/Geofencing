@@ -18,8 +18,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class WelcomeActivity extends AppCompatActivity {
 
+    private static final Log log = LogFactory.getLog(WelcomeActivity.class);
+    private static final String TAG = "WelcomeActivity";
     ActivityWelcomeBinding binding;
     SharedPreferencesUtil sf;
     private FirebaseAuth Auth;
@@ -33,12 +38,8 @@ public class WelcomeActivity extends AppCompatActivity {
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         Auth = FirebaseAuth.getInstance();
         sf = new SharedPreferencesUtil(WelcomeActivity.this);
+        android.util.Log.d(TAG, "account_type: "+sf.getPref("account_type", WelcomeActivity.this));
 
-        if (sf.getPref("pair_code", WelcomeActivity.this) != null) {
-            Intent intent = new Intent(WelcomeActivity.this, ChildActivity.class);
-            startActivity(intent);
-            finish();
-        }
         // Check if user is logged in
         if (Auth.getCurrentUser() != null) {
 
@@ -56,8 +57,8 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
 
-            Toast.makeText(WelcomeActivity.this, "Already logged in",
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(WelcomeActivity.this, "Already logged in",
+//                    Toast.LENGTH_SHORT).show();
 
 //            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.geofencing.ChildLoginActivity;
 import com.example.geofencing.Config;
 import com.example.geofencing.MainActivity;
 import com.example.geofencing.R;
@@ -148,6 +149,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Auth Success
     private void onAuthSuccess(FirebaseUser user) {
         String name = StringHelper.usernameFromEmail(user.getEmail());
+        sf.setPref("account_type", "parent", LoginActivity.this);
 
         // Create User If Not Exist
 //        DBHelper.saveUser(DB, user.getUid(), name, user.getEmail());

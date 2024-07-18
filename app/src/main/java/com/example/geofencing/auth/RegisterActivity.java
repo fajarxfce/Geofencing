@@ -126,6 +126,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // Make alert
         Toast.makeText(RegisterActivity.this, "Sign Up Success !",
                 Toast.LENGTH_SHORT).show();
+        Auth.signOut();
 
         // Move to Main Activity
 //        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
