@@ -21,6 +21,7 @@ import com.example.geofencing.databinding.FragmentHomeBinding;
 import com.example.geofencing.dialog.ChildCodeDialog;
 import com.example.geofencing.dialog.ChildOptionDialog;
 import com.example.geofencing.dialog.DeleteChildDialog;
+import com.example.geofencing.dialog.EnterChildPairCodeDialog;
 import com.example.geofencing.model.Child;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -58,7 +59,9 @@ public class HomeFragment extends Fragment {
         binding.fabAddChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_addChildFragment);
+//                Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_addChildFragment);
+                EnterChildPairCodeDialog dialog = new EnterChildPairCodeDialog(view);
+                dialog.show(getParentFragmentManager(), dialog.getTag());
             }
         });
     }

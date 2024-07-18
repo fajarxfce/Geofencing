@@ -1,0 +1,123 @@
+package com.example.geofencing.dialog;
+
+import android.app.Dialog;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.navigation.Navigation;
+
+import com.example.geofencing.Config;
+import com.example.geofencing.R;
+import com.example.geofencing.databinding.DialogEnterChildPaircodeBinding;
+import com.example.geofencing.helper.DBHelper;
+import com.example.geofencing.util.SharedPreferencesUtil;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.List;
+
+public class EnterChildPairCodeDialog extends DialogFragment {
+
+    private static final String TAG = "EnterAreaNameDialog";
+    DialogEnterChildPaircodeBinding binding;
+
+    SharedPreferencesUtil sf;
+    private DatabaseReference DB;
+    View view;
+
+    public EnterChildPairCodeDialog(View view) {
+        // Required empty public constructor
+        this.view = view;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = DialogEnterChildPaircodeBinding.inflate(inflater, container, false);
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        if (getArguments() != null) {
+            List<LatLng> points = getArguments().getParcelableArrayList("points");
+
+        }
+
+        binding.btnSubmit.setOnClickListener(v -> { validatePairCode(); });
+
+
+        sf = new SharedPreferencesUtil(requireContext());
+
+        return binding.getRoot();
+    }
+
+    private void validatePairCode() {
+        Log.d(TAG, "validatePairCode: hadehh");
+        String pairCode = binding.txtAreaName.getText().toString().trim();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (pairCode.isEmpty()) {
+            binding.txtAreaName.setError("Pair code is required");
+            return;
+        }
+
+        DB.child("child_pair_code").child(pairCode).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String childId = snapshot.getValue(String.class);
+                    Log.d(TAG, "onDataChange: childId: " + childId);
+                    saveChild(userId, childId);
+
+                } else {
+//                    Toast.makeText(EnterChildPairCodeDialog.this.getActivity(), "Invalid pair code", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(getActivity(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+//        Navigation.findNavController(view).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
+
+        Toast.makeText(getActivity(), "Child saved", Toast.LENGTH_SHORT).show();
+        dismiss();
+
+    }
+
+    private void saveChild(String uid, String childUid) {
+        DBHelper.saveChildToParent(DB, uid,childUid);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        return dialog;
+    }
+
+}
