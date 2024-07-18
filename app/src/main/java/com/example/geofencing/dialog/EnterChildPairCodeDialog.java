@@ -63,7 +63,7 @@ public class EnterChildPairCodeDialog extends DialogFragment {
     }
 
     private void validatePairCode() {
-        Log.d(TAG, "validatePairCode: hadehh");
+
         String pairCode = binding.txtAreaName.getText().toString().trim();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (pairCode.isEmpty()) {

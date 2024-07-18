@@ -20,6 +20,7 @@ import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentBottomsheetDialogBinding;
 import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.model.Child;
+import com.example.geofencing.model.ChildPairCode;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -79,7 +80,7 @@ public class MyBottomSheetDialogFragment extends com.google.android.material.bot
             DB.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    List<Child> childList = new ArrayList<>();
+                    List<ChildPairCode> childList = new ArrayList<>();
 
                     int i = 0;
                     for (DataSnapshot clidSnapshot: dataSnapshot.getChildren()) {
@@ -87,14 +88,14 @@ public class MyBottomSheetDialogFragment extends com.google.android.material.bot
 
                         Log.d(TAG, "onDataChange: "+clidSnapshot.getKey());
 
-                        childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
+                        childList.add(new ChildPairCode(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
                     }
 
                     ChildAdapter adapter = new ChildAdapter(childList);
 
                     binding.recyclerView.setAdapter(adapter);
                     adapter.setOnItemClickListener((view, i1) -> {
-                        assignToChild(childList.get(i1).getId(), childList.get(i1).getName());
+                        assignToChild(childList.get(i1).getChildId(), childList.get(i1).getUsername());
                     });
 
                     adapter.setOnItemLongClickListener((view, i12) -> {

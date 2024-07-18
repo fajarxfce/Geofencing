@@ -23,6 +23,7 @@ import com.example.geofencing.dialog.ChildOptionDialog;
 import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.dialog.EnterChildPairCodeDialog;
 import com.example.geofencing.model.Child;
+import com.example.geofencing.model.ChildPairCode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +45,7 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-//        setupRecyclerView();
+        setupRecyclerView();
         return root;
     }
 
@@ -78,20 +79,23 @@ public class HomeFragment extends Fragment {
                 if (!isAdded()){
                     return;
                 }
-                List<Child> childList = new ArrayList<>();
+                List<ChildPairCode> childList = new ArrayList<>();
 
                 int i = 0;
                 for (DataSnapshot clidSnapshot: dataSnapshot.getChildren()) {
                     i++;
 
-                    Double lat = clidSnapshot.child("latitude").getValue(Double.class);
-                    Double lng = clidSnapshot.child("longitude").getValue(Double.class);
+//                    Double lat = clidSnapshot.child("latitude").getValue(Double.class);
+//                    Double lng = clidSnapshot.child("longitude").getValue(Double.class);
+                    String childId = clidSnapshot.child("childId").getValue(String.class);
+                    String email = clidSnapshot.child("email").getValue(String.class);
+                    String username = clidSnapshot.child("username").getValue(String.class);
 
-                    if (lat != null || lng != null) {
-                        Log.d(TAG, "onDataChange: have lat lng" + i + " " + clidSnapshot.getKey() + " " + clidSnapshot.child("name").getValue(String.class) + " " + lat + " " + lng);
-                    }
+//                    if (lat != null || lng != null) {
+//                        Log.d(TAG, "onDataChange: have lat lng" + i + " " + clidSnapshot.getKey() + " " + clidSnapshot.child("name").getValue(String.class) + " " + lat + " " + lng);
+//                    }
 
-                    childList.add(new Child(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
+                    childList.add(new ChildPairCode(clidSnapshot.getKey(), username, email));
                 }
 
                 ChildAdapter adapter = new ChildAdapter(childList);
@@ -100,12 +104,12 @@ public class HomeFragment extends Fragment {
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
                     final Bundle bundle = new Bundle();
-                    bundle.putString("id", childList.get(i1).getId());
-                    bundle.putString("name", childList.get(i1).getName());
+                    bundle.putString("id", childList.get(i1).getChildId());
+                    bundle.putString("name", childList.get(i1).getUsername());
 //                    ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
 //                    childCodeDialog.show(getParentFragmentManager(), "child_code");
 //                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_trackChildMapsFragment, bundle);
-                    ChildOptionDialog childOptionDialog = new ChildOptionDialog(view, childList.get(i1).getId(), childList.get(i1).getName());
+                    ChildOptionDialog childOptionDialog = new ChildOptionDialog(view, childList.get(i1).getChildId(), childList.get(i1).getUsername());
                     childOptionDialog.show(getParentFragmentManager(), "child_option");
                 });
 

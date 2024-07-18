@@ -13,4 +13,16 @@ public class ChildPairCode {
         this.email = email;
         this.childId = childId;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getChildId() {
+        return childId;
+    }
 }

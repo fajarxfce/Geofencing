@@ -9,13 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.geofencing.databinding.UserAdapterBinding;
 import com.example.geofencing.model.Child;
+import com.example.geofencing.model.ChildPairCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
 
-    List<Child> childList = new ArrayList<>();
+    List<ChildPairCode> childList = new ArrayList<>();
     OnItemClickListener listener;
     OnItemLongClickListener longClickListener;
 
@@ -36,7 +37,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
         this.longClickListener = longClickListener;
     }
 
-    public ChildAdapter(List<Child> childList) {
+    public ChildAdapter(List<ChildPairCode> childList) {
         this.childList = childList;
     }
 
@@ -49,8 +50,8 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ChildAdapter.ViewHolder holder, int position) {
-        holder.binding.tvName.setText(childList.get(position).getName());
-        holder.binding.tvPairkey.setText(childList.get(position).getPairkey());
+        holder.binding.tvName.setText(childList.get(position).getUsername());
+        holder.binding.tvPairkey.setText(childList.get(position).getEmail());
         holder.binding.getRoot().setOnClickListener(v -> listener.onItemClick(v, position));
         holder.binding.getRoot().setOnLongClickListener(v -> {
             if (longClickListener != null) {
