@@ -1,14 +1,13 @@
 {
   "project_info": {
-    "project_number": "1013958341932",
-    "firebase_url": "https://geofencing-new-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "geofencing-new",
-    "storage_bucket": "geofencing-new.appspot.com"
+    "project_number": "715644713530",
+    "project_id": "geofencing-d914f",
+    "storage_bucket": "geofencing-d914f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1013958341932:android:0b04bdc47124f1c14f6889",
+        "mobilesdk_app_id": "1:715644713530:android:77733763c2b5e502afd303",
         "android_client_info": {
           "package_name": "com.example.geofencing"
         }
@@ -16,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDIZbgWa_EgCIv150a1JcafOhVUYnSeCtE"
+          "current_key": "AIzaSyB1R6zE4zlzw2IcvSiKIR3M5PuyOKrEeZc"
         }
       ],
       "services": {

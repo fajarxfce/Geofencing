@@ -110,7 +110,7 @@ public class ChildActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        retrieveFcmToken();
+//        retrieveFcmToken();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getLastLocation();
 
@@ -235,43 +235,6 @@ public class ChildActivity extends AppCompatActivity {
         for (int i = 0; i < points.size(); i++) {
             Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
         }
-    }
-
-    private void retrieveFcmToken() {
-
-        String pairCode = sf.getPref("pair_code", ChildActivity.this);
-        String parentId = sf.getPref("parent_id", ChildActivity.this);
-
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + parentId);
-
-        DB.addListenerForSingleValueEvent(new ValueEventListener()  {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-
-                    String fcmToken = snapshot.child("fcm_token").getValue(String.class);
-                    // Execute
-
-                    if (fcmToken != null) {
-                        Log.d(TAG, "onDataChange: "+fcmToken);
-                        sf.setPref("parent_fcm_token", fcmToken, ChildActivity.this);
-
-                    }
-
-                }else {
-                    Toast.makeText(ChildActivity.this, "Pair code is invalid", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onDataChange: "+snapshot);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-
     }
 
     private boolean isLocationServiceRunning() {

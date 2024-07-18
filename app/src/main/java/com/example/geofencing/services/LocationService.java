@@ -13,12 +13,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
+import com.example.geofencing.adapter.ChildLocationHistoryAdapter;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.model.ChildCoordinat;
+import com.example.geofencing.model.ChildLocationHistory;
+import com.example.geofencing.model.FcmToken;
 import com.example.geofencing.model.LocationHistory;
 import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.util.AccessToken;
@@ -37,28 +42,33 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
+import org.apache.commons.logging.LogFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 public class LocationService extends Service {
 
     private static final String TAG = "LocationService";
+    private static final org.apache.commons.logging.Log log = LogFactory.getLog(LocationService.class);
     SharedPreferencesUtil sp;
-    private DatabaseReference DB;
+    private DatabaseReference DB, DB2;
     List<LatLng> latLngList;
+    List<FcmToken> fcmTokenList = new ArrayList<>();
 
     private LocationListener locationListener;
     private Boolean lastStatus = null;
     List<List<LatLng>> polygons = new ArrayList<>();
     List<String> areasName = new ArrayList<>();
 
-    public interface LocationListener{
+    public interface LocationListener {
         void onLocationChanged(boolean inside, String area);
     }
 
-    private void setLocationListener(LocationListener locationListener){
+    private void setLocationListener(LocationListener locationListener) {
         this.locationListener = locationListener;
     }
 
@@ -101,6 +111,7 @@ public class LocationService extends Service {
 
         }
     };
+
     private void getAreas(String childId) {
         // Get reference to the areas
         DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
@@ -187,6 +198,32 @@ public class LocationService extends Service {
         });
     }
 
+    private void getFcmToken() {
+        String parentId = sp.getPref("parent_id", this);
+        DatabaseReference DB2 = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + parentId + "/fcm_token");
+        Log.d(TAG, "getFcmToken: "+DB2);
+        DB2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                fcmTokenList.clear();
+                dataSnapshot.getChildren().forEach(dataSnapshot1 -> {
+                    Log.d(TAG, "fetchFcm: "+dataSnapshot1.getValue(String.class));
+                    fcmTokenList.add(new FcmToken(dataSnapshot1.getValue(String.class)));
+                });
+
+                for (int i = 0; i < fcmTokenList.size(); i++) {
+                    Log.d(TAG, "fcmTokenList: "+fcmTokenList.get(i).getFcmToken());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("Error", databaseError.getMessage());
+            }
+        });
+    }
+
 
     @Override
     public void onCreate() {
@@ -195,6 +232,7 @@ public class LocationService extends Service {
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         String pairCode = sp.getPref("pair_code", this);
         getAreas(pairCode);
+        getFcmToken();
 
         setLocationListener(new LocationListener() {
             @Override
@@ -214,23 +252,28 @@ public class LocationService extends Service {
                 String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
                 String body = "";
                 String title = "Location Service";
-                if (inside){
-                    body = "[ "+timestamp +" ]"+ " : Your child "+name + " is inside the polygon "+area;
-                } else {
-                    body = "[ "+timestamp + " ]"+" : Your child " + name + " is outside the polygon";
-                }
-
-                SendNotification sendNotification = new SendNotification(accessToken, parentFcmToken, title, body);
 
                 if (inside) {
-                    Log.d(TAG, "onLocationChanged test: "+name+" Inside the polygon "+ area);
-                    sendNotification.sendNotification();
-                    saveLocationHistoryToFirebase("[ "+timestamp +" ]"+ " Your child "+name + " is inside the "+ area);
+                    body = "[ " + timestamp + " ]" + " : Your child " + name + " is inside the polygon " + area;
                 } else {
-                    Log.d(TAG, "onLocationChanged test: "+name+" Outside the polygon ");
-                    saveLocationHistoryToFirebase("[ "+timestamp +" ]"+ " Your child "+name + " is outside the polygon");
-                    sendNotification.sendNotification();
+                    body = "[ " + timestamp + " ]" + " : Your child " + name + " is outside the polygon";
                 }
+
+                for (int i = 0; i < fcmTokenList.size(); i++) {
+                    SendNotification sendNotification = new SendNotification(accessToken, fcmTokenList.get(i).getFcmToken(), title, body);
+
+                    if (inside) {
+                        Log.d(TAG, "onLocationChanged test: " + name + " Inside the polygon " + area);
+                        sendNotification.sendNotification();
+                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is inside the " + area);
+                    } else {
+                        Log.d(TAG, "onLocationChanged test: " + name + " Outside the polygon ");
+                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is outside the polygon");
+                        sendNotification.sendNotification();
+                    }
+                }
+
+
             }
         });
     }

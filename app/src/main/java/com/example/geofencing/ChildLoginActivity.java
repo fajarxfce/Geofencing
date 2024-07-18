@@ -12,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.geofencing.auth.RegisterChildActivity;
 import com.example.geofencing.databinding.ActivityChildLoginBinding;
 import com.example.geofencing.model.ChildData;
 import com.example.geofencing.ui.child.ChildActivity;
@@ -38,51 +39,56 @@ public class ChildLoginActivity extends AppCompatActivity {
         sf = new SharedPreferencesUtil(ChildLoginActivity.this);
 
         binding.login.setOnClickListener(v -> {
-            validatePairCode();
+
+        });
+
+        binding.register.setOnClickListener(v -> {
+            Intent intent = new Intent(ChildLoginActivity.this, RegisterChildActivity.class);
+            startActivity(intent);
         });
 
     }
 
-    private void validatePairCode() {
-        String pairCode = binding.pairCode.getText().toString().trim();
-        if (pairCode.isEmpty()) {
-            binding.pairCode.setError("Pair code is required");
-            return;
-        }
-
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode);
-
-        DB.addListenerForSingleValueEvent(new ValueEventListener()  {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-
-                    ChildData childData = snapshot.getValue(ChildData.class);
-                    // Execute
-                    Toast.makeText(ChildLoginActivity.this, "Pair code is valid", Toast.LENGTH_SHORT).show();
-
-                    if (childData != null) {
-                        Log.d(TAG, "onDataChange: "+childData.getName().toString());
-                        Log.d(TAG, "onDataChange: "+childData.getPairKey().toString());
-                        Log.d(TAG, "onDataChange: "+childData.getParentId().toString());
-                        sf.setPref("pair_code", pairCode, ChildLoginActivity.this);
-                        sf.setPref("name", childData.getName().toString(), ChildLoginActivity.this);
-                        sf.setPref("pair_key", childData.getPairKey().toString(), ChildLoginActivity.this);
-                        sf.setPref("parent_id", childData.getParentId().toString(), ChildLoginActivity.this);
-
-                        Intent intent = new Intent(ChildLoginActivity.this, ChildActivity.class);
-                        startActivity(intent);
-                    }
-
-                }else {
-                    Toast.makeText(ChildLoginActivity.this, "Pair code is invalid", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
+//    private void validatePairCode() {
+//        String pairCode = binding.pairCode.getText().toString().trim();
+//        if (pairCode.isEmpty()) {
+//            binding.pairCode.setError("Pair code is required");
+//            return;
+//        }
+//
+//        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode);
+//
+//        DB.addListenerForSingleValueEvent(new ValueEventListener()  {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//
+//                    ChildData childData = snapshot.getValue(ChildData.class);
+//                    // Execute
+//                    Toast.makeText(ChildLoginActivity.this, "Pair code is valid", Toast.LENGTH_SHORT).show();
+//
+//                    if (childData != null) {
+//                        Log.d(TAG, "onDataChange: "+childData.getName().toString());
+//                        Log.d(TAG, "onDataChange: "+childData.getPairKey().toString());
+//                        Log.d(TAG, "onDataChange: "+childData.getParentId().toString());
+//                        sf.setPref("pair_code", pairCode, ChildLoginActivity.this);
+//                        sf.setPref("name", childData.getName().toString(), ChildLoginActivity.this);
+//                        sf.setPref("pair_key", childData.getPairKey().toString(), ChildLoginActivity.this);
+//                        sf.setPref("parent_id", childData.getParentId().toString(), ChildLoginActivity.this);
+//
+//                        Intent intent = new Intent(ChildLoginActivity.this, ChildActivity.class);
+//                        startActivity(intent);
+//                    }
+//
+//                }else {
+//                    Toast.makeText(ChildLoginActivity.this, "Pair code is invalid", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
 }

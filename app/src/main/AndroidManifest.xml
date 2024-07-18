@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Material3.DayNight"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".auth.RegisterChildActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChildLoginActivity"
             android:exported="false" />
         <activity

@@ -34,13 +34,35 @@ public class DBHelper {
                 .setValue(user);
     }
 
+    public static void saveUserChild(DatabaseReference DB, String userId, String name, String email) {
+        User user = new User(name, email);
+
+        DB.child("childs")
+                .child(userId)
+                .setValue(user);
+    }
+
+    public static void saveChildCode(DatabaseReference db, String childId) {
+        Random rnd = new Random();
+        int number = rnd.nextInt(999999);
+
+        String pairkey = String.format("%06d", number);
+        HashMap<String, String> data = new HashMap<>();
+        data.put("anjay", "mabar");
+
+        db.child("child_pair_code").child(pairkey).setValue(childId);
+        Log.d(TAG, "saveLocationHistory: saved");
+    }
+
     public static void saveLocationHistory(DatabaseReference db, String pairCode, LocationHistory location) {
         db.child("location_history").child(pairCode).push().setValue(location);
         Log.d(TAG, "saveLocationHistory: saved");
     }
 
     public static void saveLocationHistory2(DatabaseReference db, String pairCode, String message) {
-        db.child("location_history").child(pairCode).push().setValue(message);
+        db.child("location_history")
+                .child(pairCode)
+                .push().setValue(message);
         Log.d(TAG, "saveLocationHistory: saved");
     }
 
@@ -66,7 +88,8 @@ public class DBHelper {
 
         DB.child("users")
                 .child(parentId)
-                .updateChildren(updates);
+                .child("fcm_token")
+                .push().setValue(fcmToken);
     }
 
     public static void saveChild(DatabaseReference DB, String parentId, String name) {

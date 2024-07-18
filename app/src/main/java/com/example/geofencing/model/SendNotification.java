@@ -27,7 +27,7 @@ public class SendNotification {
     private final String userFcmToken;
     private final String title;
     private final String body;
-    private final String postUrl = "https://fcm.googleapis.com/v1/projects/geofencing-new/messages:send";
+    private final String postUrl = "https://fcm.googleapis.com/v1/projects/geofencing-d914f/messages:send";
 
     public SendNotification(String accessToken, String userFcmToken, String title, String body) {
         this.accessToken = accessToken;
