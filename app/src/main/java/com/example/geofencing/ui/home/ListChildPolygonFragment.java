@@ -17,14 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.geofencing.Config;
-import com.example.geofencing.R;
-import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.adapter.ListChildPolygonAdapter;
 import com.example.geofencing.bottomsheet.AddPolygonBottomsheet;
 import com.example.geofencing.databinding.FragmentListChildPolygonBinding;
-import com.example.geofencing.dialog.ChildOptionDialog;
-import com.example.geofencing.dialog.EnterChildPairCodeDialog;
-import com.example.geofencing.model.Child;
 import com.example.geofencing.model.ListChildPolygon;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +51,7 @@ public class ListChildPolygonFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
+        Log.d(TAG, "onViewCreated: "+getArguments().getString("id"));
         binding.fabAddPolygon.setOnClickListener(v -> {
             addPolygon();
         });
@@ -103,8 +99,9 @@ public class ListChildPolygonFragment extends Fragment {
                 binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
+                    Log.d(TAG, "onDataChange: "+listChildPolygons.get(i1).getName());
 
-                    showDeleteConfirmationDialog(listChildPolygons.get(i1).getKey(), pairCode);
+                    showDeleteConfirmationDialog(listChildPolygons.get(i1).getKey(), getArguments().getString("id"));
                 });
 
             }
@@ -116,14 +113,15 @@ public class ListChildPolygonFragment extends Fragment {
         });
     }
 
-    private void showDeleteConfirmationDialog(String key, String pairCode) {
+    private void showDeleteConfirmationDialog(String key, String childId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Hapus Area");
         builder.setMessage("Apakah Anda yakin ingin menghapus area ini?");
 
         builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                removeFromChild(key, pairCode);
+                Log.d(TAG, "onClick: "+getArguments().getString("id"));
+                removeAreaFromChild(key, childId);
             }
         });
         builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
@@ -136,8 +134,8 @@ public class ListChildPolygonFragment extends Fragment {
         dialog.show();
     }
 
-    private  void removeFromChild(String key, String pairCode){
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode + "/areas");
+    private  void removeAreaFromChild(String key, String childId){
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + childId + "/areas");
 
         Log.d(TAG, "removeFromChild: "+key);
 
