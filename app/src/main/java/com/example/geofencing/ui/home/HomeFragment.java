@@ -22,6 +22,7 @@ import com.example.geofencing.dialog.ChildCodeDialog;
 import com.example.geofencing.dialog.ChildOptionDialog;
 import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.dialog.EnterChildPairCodeDialog;
+import com.example.geofencing.helper.StringHelper;
 import com.example.geofencing.model.Child;
 import com.example.geofencing.model.ChildPairCode;
 import com.google.firebase.auth.FirebaseAuth;
@@ -106,10 +107,16 @@ public class HomeFragment extends Fragment {
                     final Bundle bundle = new Bundle();
                     bundle.putString("id", childList.get(i1).getChildId());
                     bundle.putString("name", childList.get(i1).getUsername());
+                    Log.d(TAG, "onDataChange: "+childList.get(i1).getUsername());
 //                    ChildCodeDialog childCodeDialog = new ChildCodeDialog(childList.get(i1).getPairkey());
 //                    childCodeDialog.show(getParentFragmentManager(), "child_code");
 //                    Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_trackChildMapsFragment, bundle);
-                    ChildOptionDialog childOptionDialog = new ChildOptionDialog(view, childList.get(i1).getChildId(), childList.get(i1).getUsername());
+                    ChildOptionDialog childOptionDialog = new ChildOptionDialog(
+                            view,
+                            childList.get(i1).getChildId(),
+                            StringHelper.usernameFromEmail(childList.get(i1).getEmail()),
+                            childList.get(i1).getUsername()
+                    );
                     childOptionDialog.show(getParentFragmentManager(), "child_option");
                 });
 

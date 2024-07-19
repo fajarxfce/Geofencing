@@ -20,26 +20,37 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class DeleteChildDialog extends DialogFragment {
 
+    private static final String TAG = "DeleteChildDialog";
     private String id;
     private String name;
+    private String pairCode;
 
     private DatabaseReference DB;
+    private FirebaseAuth Auth;
 
-    public DeleteChildDialog(String id, String name) {
+    public DeleteChildDialog(String id, String name, String pairCode) {
         this.id = id;
         this.name = name;
+        this.pairCode = pairCode;
         this.DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        this.Auth = FirebaseAuth.getInstance();
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Delete "+name+"?")
+        builder.setMessage("Hapus "+name+"?")
                 .setPositiveButton("Delete", (dialog, id) -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+                    Log.d(TAG, "onCreateDialog: name: "+this.name);
+                    Log.d(TAG, "onCreateDialog: id :"+this.id);
+                    Log.d(TAG, "onCreateDialog: id :"+this.pairCode);
+
                     // Delete child
-                    DBHelper.deleteChild(this.DB, user.getUid(), this.id);
+                    DBHelper.deleteChildFromParent(this.DB, Auth.getUid(), this.pairCode);
+                    DBHelper.deleteParentFromChild(this.DB, this.id, Auth.getUid());
+                    DBHelper.deleteParentFcmFromChild(this.DB, this.id, Auth.getUid());
 
                     // Make alert
                     Toast.makeText(getActivity(), "Child deleted",

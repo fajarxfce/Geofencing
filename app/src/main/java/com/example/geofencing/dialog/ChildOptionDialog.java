@@ -3,6 +3,7 @@ package com.example.geofencing.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,15 +21,17 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ChildOptionDialog extends DialogFragment {
 
+    private static final String TAG = "ChildOptionDialog";
     private String id;
-    private String name;
+    private String name, pairCode;
     private View view;
 
     private DatabaseReference DB;
 
-    public ChildOptionDialog(View view, String id, String name) {
+    public ChildOptionDialog(View view, String id, String name, String paircode) {
         this.id = id;
         this.name = name;
+        this.pairCode = paircode;
         this.view = view;
         this.DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
     }
@@ -61,7 +64,8 @@ public class ChildOptionDialog extends DialogFragment {
                     break;
                 case 3:
                     // Hapus Anak
-                    new DeleteChildDialog(this.id, this.name).show(getParentFragmentManager(), "delete_child");
+                    new DeleteChildDialog(this.id, this.name, this.pairCode).show(getParentFragmentManager(), "delete_child");
+                    Log.d(TAG, "onCreateDialog: "+this.pairCode);
                     break;
             }
         });

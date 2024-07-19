@@ -173,6 +173,30 @@ public class DBHelper {
                 .removeValue();
     }
 
+    public static void deleteChildFromParent(DatabaseReference DB, String parentId, String id) {
+        DB.child("users")
+                .child(parentId)
+                .child("childs")
+                .child(id)
+                .removeValue();
+    }
+
+    public static void deleteParentFromChild(DatabaseReference DB, String childId, String parentId) {
+        DB.child("childs")
+                .child(childId)
+                .child("parents")
+                .child(parentId)
+                .removeValue();
+    }
+
+    public static void deleteParentFcmFromChild(DatabaseReference DB, String childId, String parentId) {
+        DB.child("childs")
+                .child(childId)
+                .child("parent_fcm_token")
+                .child(parentId)
+                .removeValue();
+    }
+
     public static void saveArea(DatabaseReference DB, String parentId, String name, List<LatLng> points) {
         for (int i = 0; i < points.size(); i++) {
             DB.child("users")
