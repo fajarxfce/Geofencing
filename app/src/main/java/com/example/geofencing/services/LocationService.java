@@ -21,6 +21,7 @@ import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.adapter.ChildLocationHistoryAdapter;
 import com.example.geofencing.helper.DBHelper;
+import com.example.geofencing.helper.StringHelper;
 import com.example.geofencing.model.ChildCoordinat;
 import com.example.geofencing.model.ChildLocationHistory;
 import com.example.geofencing.model.FcmToken;
@@ -204,8 +205,8 @@ public class LocationService extends Service {
     }
 
     private void getFcmToken() {
-        String parentId = sp.getPref("parent_id", this);
-        DatabaseReference DB2 = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + parentId + "/fcm_token");
+
+        DatabaseReference DB2 = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + Auth.getUid() + "/parent_fcm_token");
         Log.d(TAG, "getFcmToken: "+DB2);
         DB2.addValueEventListener(new ValueEventListener() {
             @Override
@@ -255,7 +256,7 @@ public class LocationService extends Service {
                 String timestamp = formatter.format(now);
 
                 String accessToken = AccessToken.getAccessToken();
-                String name = sp.getPref("name", getApplicationContext());
+                String name = StringHelper.usernameFromEmail(Auth.getCurrentUser().getEmail());
                 String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
                 String body = "";
                 String title = "Location Service";

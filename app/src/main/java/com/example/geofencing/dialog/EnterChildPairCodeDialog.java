@@ -1,6 +1,7 @@
 package com.example.geofencing.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,10 +40,11 @@ public class EnterChildPairCodeDialog extends DialogFragment {
     private DatabaseReference DB;
     FirebaseAuth Auth;
     View view;
-
-    public EnterChildPairCodeDialog(View view) {
+    private Context context;
+    public EnterChildPairCodeDialog(View view, Context context) {
         // Required empty public constructor
         this.view = view;
+        this.context = context;
     }
 
     @Override
@@ -85,7 +87,8 @@ public class EnterChildPairCodeDialog extends DialogFragment {
 
                     DBHelper.saveChildToParent(DB, userId,pairCode, childPairCode);
                     DBHelper.saveParentToChild(DB, childUid, userId);
-                    DBHelper.saveFcmTokenToChild(DB, childUid, Auth.getUid(), sf.getPref("parent_fcm_token", getContext()));
+                    DBHelper.saveFcmTokenToChild(DB, childUid, Auth.getUid(), sf.getPref("parent_fcm_token", context));
+
 
                 } else {
                     binding.txtAreaName.setError("Pair code not found");

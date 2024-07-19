@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_addChildFragment);
-                EnterChildPairCodeDialog dialog = new EnterChildPairCodeDialog(view);
+                EnterChildPairCodeDialog dialog = new EnterChildPairCodeDialog(view, getContext());
                 dialog.show(getParentFragmentManager(), dialog.getTag());
             }
         });
