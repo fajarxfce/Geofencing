@@ -25,6 +25,8 @@ import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityChildBinding;
+import com.example.geofencing.dialog.ChildCodeDialog;
+import com.example.geofencing.dialog.ChildInfo;
 import com.example.geofencing.model.ChildData;
 import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.services.LocationService;
@@ -64,6 +66,7 @@ public class ChildActivity extends AppCompatActivity {
     SharedPreferencesUtil sf = new SharedPreferencesUtil(ChildActivity.this);
     List<LatLng> latLngList;
     FirebaseAuth Auth;
+    private String childCode = "";
 
     private FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -112,6 +115,25 @@ public class ChildActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Auth = FirebaseAuth.getInstance();
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        DB.child("childs").child(Auth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ChildInfo childData = snapshot.getValue(ChildInfo.class);
+                childCode = childData.getPairKey();
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle(childData.getUsername());
+                }
+                binding.fabInfo.setOnClickListener(v -> {
+                    createInfoDialog();
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 //        retrieveFcmToken();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         binding.fabInfo.setOnClickListener(v -> {
@@ -142,10 +164,13 @@ public class ChildActivity extends AppCompatActivity {
             startLocationService();
         }
 
+
+
     }
 
     private void createInfoDialog() {
-
+        ChildCodeDialog dialog = new ChildCodeDialog(childCode);
+        dialog.show(getSupportFragmentManager(), "ChildCodeDialog");
     }
 
     private void getAreas(String childId) {
