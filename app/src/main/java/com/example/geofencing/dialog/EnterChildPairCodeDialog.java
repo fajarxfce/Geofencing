@@ -37,6 +37,7 @@ public class EnterChildPairCodeDialog extends DialogFragment {
 
     SharedPreferencesUtil sf;
     private DatabaseReference DB;
+    FirebaseAuth Auth;
     View view;
 
     public EnterChildPairCodeDialog(View view) {
@@ -49,6 +50,7 @@ public class EnterChildPairCodeDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         binding = DialogEnterChildPaircodeBinding.inflate(inflater, container, false);
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        Auth = FirebaseAuth.getInstance();
         if (getArguments() != null) {
             List<LatLng> points = getArguments().getParcelableArrayList("points");
 
@@ -83,6 +85,7 @@ public class EnterChildPairCodeDialog extends DialogFragment {
 
                     DBHelper.saveChildToParent(DB, userId,pairCode, childPairCode);
                     DBHelper.saveParentToChild(DB, childUid, userId);
+                    DBHelper.saveFcmTokenToChild(DB, childUid, Auth.getUid(), sf.getPref("parent_fcm_token", getContext()));
 
                 } else {
                     binding.txtAreaName.setError("Pair code not found");

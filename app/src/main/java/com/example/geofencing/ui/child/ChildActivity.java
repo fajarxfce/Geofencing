@@ -139,7 +139,7 @@ public class ChildActivity extends AppCompatActivity {
                     Contstants.REQUEST_CODE_LOCATION_PERMISSION
             );
         } else {
-//            startLocationService();
+            startLocationService();
         }
 
     }

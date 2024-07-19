@@ -17,6 +17,7 @@ import com.example.geofencing.Config;
 import com.example.geofencing.MainActivity;
 import com.example.geofencing.R;
 import com.example.geofencing.helper.DBHelper;
+import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +29,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
     private DatabaseReference DB;
-
+    private SharedPreferencesUtil sf;
     // [START receive_message]
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -79,6 +80,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // manage this apps subscriptions on the server side, send the
         // FCM registration token to your app server.
         sendRegistrationToServer(token);
+        sf.setPref("parent_fcm_token", token, this);
     }
     // [END on_new_token]
 
@@ -87,6 +89,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onCreate() {
         super.onCreate();
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+        sf = new SharedPreferencesUtil(this);
     }
 
     private void handleNow() {

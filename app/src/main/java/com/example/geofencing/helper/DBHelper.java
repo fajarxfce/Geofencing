@@ -106,6 +106,14 @@ public class DBHelper {
                 .setValue(parentId);
     }
 
+    public static void saveFcmTokenToChild(DatabaseReference DB, String childId,String parentId, String fcmToken){
+        DB.child("childs")
+                .child(childId)
+                .child("parent_fcm_token")
+                .child(parentId)
+                .setValue(fcmToken);
+    }
+
     public static void saveChild(DatabaseReference DB, String parentId, String name) {
         childName = name;
         childParentId = parentId;

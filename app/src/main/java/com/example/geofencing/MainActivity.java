@@ -11,6 +11,7 @@ import com.example.geofencing.databinding.ActivityMainBinding;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.util.AccessToken;
+import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     NavController navController;
     private DatabaseReference DB;
+    SharedPreferencesUtil sf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        sf = new SharedPreferencesUtil(this);
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
-//        logRegToken();
+        logRegToken();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Log and toast
                         String msg = "FCM Registration token: " + token;
+                        sf.setPref("parent_fcm_token", token, MainActivity.this);
                         //simpan fcm token punya orang tua ke firebase
                         DBHelper.saveParentToken(DB, user, token);
                         Log.d(TAG, msg);
