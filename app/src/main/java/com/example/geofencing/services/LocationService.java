@@ -58,6 +58,7 @@ public class LocationService extends Service {
     private DatabaseReference DB, DB2;
     List<LatLng> latLngList;
     List<FcmToken> fcmTokenList = new ArrayList<>();
+    private FirebaseAuth Auth;
 
     private LocationListener locationListener;
     private Boolean lastStatus = null;
@@ -133,7 +134,7 @@ public class LocationService extends Service {
 //                    break;
                 }
 
-//                getPolygonData(areas);
+                getPolygonData(areas);
             }
 
             @Override
@@ -146,22 +147,23 @@ public class LocationService extends Service {
 
     private void getPolygonData(List<String> areas) {
         // Update your UI with the areas here
-        String userId = sp.getPref("parent_id", this);
+//        String userId = sp.getPref("parent_id", this);
 
         for (int i = 0; i < areas.size(); i++) {
             String areaName = areas.get(i);
 
             Log.d(TAG, "getPolygonData: " + areaName);
 
-            getLatLng(userId, areaName);
+            getLatLng(areaName);
 
         }
 
     }
 
-    private void getLatLng(String userId, String areaName) {
+    private void getLatLng(String areaName) {
         // Get reference to the latitude and longitude
-        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users").child(userId).child("areas").child(areaName);
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas")
+                .child(areaName);
 
 
         Log.d(TAG, "getLatLng: " + latLngRef.toString());
@@ -233,9 +235,10 @@ public class LocationService extends Service {
         super.onCreate();
         sp = new SharedPreferencesUtil(this);
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
-        String pairCode = sp.getPref("pair_code", this);
-        Log.d(TAG, "onCreate: paircode "+pairCode);
-        getAreas(pairCode);
+        Auth = FirebaseAuth.getInstance();
+
+
+        getAreas(Auth.getUid());
         getFcmToken();
 
         setLocationListener(new LocationListener() {
@@ -284,14 +287,14 @@ public class LocationService extends Service {
 
     private void saveLocationToFirebase(double latitude, double longitude) {
         Log.d(TAG, "saveLocationToFirebase: " + latitude + " " + longitude);
-        String pairCode = sp.getPref("pair_code", this);
-        String parentId = sp.getPref("parent_id", this);
-        DBHelper.saveCurrentLocation(
-                DB,
-                pairCode,
-                new ChildCoordinat(latitude, longitude),
-                parentId
-        );
+//        String pairCode = sp.getPref("pair_code", this);
+//        String parentId = sp.getPref("parent_id", this);
+//        DBHelper.saveCurrentLocation(
+//                DB,
+//                pairCode,
+//                new ChildCoordinat(latitude, longitude),
+//                parentId
+//        );
 
     }
 

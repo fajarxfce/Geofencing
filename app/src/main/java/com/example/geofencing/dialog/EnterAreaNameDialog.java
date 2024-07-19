@@ -67,6 +67,7 @@ public class EnterAreaNameDialog extends DialogFragment {
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
 
         DBHelper.saveArea(DB, uid, areaName, points);
+        DBHelper.saveArea2(DB, uid, areaName, points);
 
         Navigation.findNavController(view).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
 

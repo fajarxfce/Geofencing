@@ -63,6 +63,7 @@ public class ChildActivity extends AppCompatActivity {
     private DatabaseReference DB;
     SharedPreferencesUtil sf = new SharedPreferencesUtil(ChildActivity.this);
     List<LatLng> latLngList;
+    FirebaseAuth Auth;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -97,7 +98,7 @@ public class ChildActivity extends AppCompatActivity {
 //            String childId = sf.getPref("pair_code", ChildActivity.this);
             enableUserLocation();
 
-//            getAreas(childId);
+            getAreas(Auth.getUid());
 
 
         }
@@ -110,6 +111,7 @@ public class ChildActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        Auth = FirebaseAuth.getInstance();
 //        retrieveFcmToken();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         binding.fabInfo.setOnClickListener(v -> {
@@ -137,7 +139,7 @@ public class ChildActivity extends AppCompatActivity {
                     Contstants.REQUEST_CODE_LOCATION_PERMISSION
             );
         } else {
-            startLocationService();
+//            startLocationService();
         }
 
     }
@@ -160,6 +162,7 @@ public class ChildActivity extends AppCompatActivity {
                 for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
                     i++;
                     String area = areaSnapshot.getValue(String.class);
+                    Log.d(TAG, "getAreas: "+area);
                     areas.add(area);
 //                    break;
                 }
@@ -192,7 +195,7 @@ public class ChildActivity extends AppCompatActivity {
 
     private void getLatLng(String userId, String areaName) {
         // Get reference to the latitude and longitude
-        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users").child(userId).child("areas").child(areaName);
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas").child(areaName);
 
 
         Log.d(TAG, "getLatLng: " + latLngRef.toString());

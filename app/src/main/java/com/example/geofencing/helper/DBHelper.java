@@ -176,6 +176,15 @@ public class DBHelper {
         }
     }
 
+    public static void saveArea2(DatabaseReference DB, String parentId, String name, List<LatLng> points) {
+        for (int i = 0; i < points.size(); i++) {
+            DB.child("areas")
+                    .child(name)
+                    .child(String.valueOf(i))
+                    .setValue(points.get(i));
+        }
+    }
+
     public static void deleteArea(DatabaseReference DB, String parentId, String id) {
         DB.child("users")
                 .child(parentId)
