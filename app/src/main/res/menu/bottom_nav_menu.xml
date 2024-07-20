@@ -7,12 +7,12 @@
         android:title="@string/akun" />
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_polygons"
         android:icon="@drawable/baseline_format_list_bulleted_24"
         android:title="@string/polygon" />
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_childs"
         android:icon="@drawable/baseline_child_care_24"
         android:title="@string/anak" />
 

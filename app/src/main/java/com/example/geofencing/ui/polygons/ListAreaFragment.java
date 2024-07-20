@@ -51,7 +51,7 @@ public class ListAreaFragment extends Fragment {
     }
 
     private void setupEventListener() {
-        binding.fabAddArea.setOnClickListener(view -> Navigation.findNavController(view).navigate(R.id.action_navigation_dashboard_to_addAreaFragment));
+        binding.fabAddArea.setOnClickListener(view -> Navigation.findNavController(view).navigate(R.id.action_navigation_polygons_to_addPolygonMapsFragment));
     }
 
     private void setupRecyclerView() {

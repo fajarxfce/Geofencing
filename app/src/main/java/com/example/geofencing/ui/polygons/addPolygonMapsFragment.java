@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.geofencing.R;
-import com.example.geofencing.databinding.FragmentPolygonMapsBinding;
+import com.example.geofencing.databinding.FragmentAddPolygonMapsBinding;
 import com.example.geofencing.dialog.EnterAreaNameDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -33,11 +33,11 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PolygonMapsFragment extends Fragment {
+public class addPolygonMapsFragment extends Fragment {
 
     private static final String TAG = "PolygonMapsFragment";
     private GoogleMap mMap;
-    FragmentPolygonMapsBinding binding;
+    FragmentAddPolygonMapsBinding binding;
     private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private List<LatLng> points = new ArrayList<>();
@@ -129,7 +129,7 @@ public class PolygonMapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentPolygonMapsBinding.inflate(inflater, container, false);
+        binding = FragmentAddPolygonMapsBinding.inflate(inflater, container, false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return binding.getRoot();
     }

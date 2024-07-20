@@ -12,38 +12,29 @@
         tools:layout="@layout/fragment_user" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_polygons"
         android:name="com.example.geofencing.ui.polygons.ListAreaFragment"
         android:label="@string/polygon"
         tools:layout="@layout/fragment_list_area">
         <action
-            android:id="@+id/action_navigation_dashboard_to_addAreaFragment"
-            app:destination="@id/navigation_polygon_maps" />
-        <action
             android:id="@+id/action_navigation_dashboard_to_detailMapFragment"
             app:destination="@id/navigation_detail_map" />
-    </fragment>
-    <fragment
-        android:id="@+id/navigation_polygon_maps"
-        android:name="com.example.geofencing.ui.polygons.PolygonMapsFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_polygon_maps">
         <action
-            android:id="@+id/action_addAreaFragment_to_navigation_dashboard"
-            app:destination="@id/navigation_dashboard" />
+            android:id="@+id/action_navigation_polygons_to_addPolygonMapsFragment"
+            app:destination="@id/addPolygonMapsFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_detail_map"
         android:name="com.example.geofencing.ui.polygons.DetailPolygonFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_polygon_maps">
+        tools:layout="@layout/fragment_add_polygon_maps">
         <action
             android:id="@+id/action_DetailAreaFragment_to_navigation_dashboard"
-            app:destination="@id/navigation_dashboard" />
+            app:destination="@id/navigation_polygons" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_childs"
         android:name="com.example.geofencing.ui.home.HomeFragment"
         android:label="@string/anak"
         tools:layout="@layout/fragment_home" >
@@ -67,13 +58,8 @@
         tools:layout="@layout/fragment_add_child" >
         <action
             android:id="@+id/action_addChildFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_childs" />
     </fragment>
-    <fragment
-        android:id="@+id/navigation_maps"
-        android:name="com.example.geofencing.ui.map.MapsFragment"
-        android:label="@string/maps"
-        tools:layout="@layout/fragment_maps" />
     <fragment
         android:id="@+id/trackChildMapsFragment"
         android:name="com.example.geofencing.ui.home.TrackChildMapsFragment"
@@ -81,7 +67,7 @@
         tools:layout="@layout/fragment_track_child_maps" >
         <action
             android:id="@+id/action_trackChildMapsFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_childs" />
     </fragment>
     <fragment
         android:id="@+id/childLocationHistoryFragment"
@@ -93,4 +79,13 @@
         android:name="com.example.geofencing.ui.home.ListChildPolygonFragment"
         android:label="List Child Polygon"
         tools:layout="@layout/fragment_list_child_polygon" />
+    <fragment
+        android:id="@+id/addPolygonMapsFragment"
+        android:name="com.example.geofencing.ui.polygons.addPolygonMapsFragment"
+        android:label="Tambah Polygon"
+        tools:layout="@layout/fragment_add_polygon_maps" >
+        <action
+            android:id="@+id/action_addPolygonMapsFragment_to_navigation_polygons"
+            app:destination="@id/navigation_polygons" />
+    </fragment>
 </navigation>

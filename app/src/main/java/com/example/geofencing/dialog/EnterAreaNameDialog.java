@@ -67,7 +67,7 @@ public class EnterAreaNameDialog extends DialogFragment {
         DBHelper.savePolygonToParent(DB, uid, polygonName, points);
         DBHelper.savePolygons(DB, polygonName, points);
 
-        Navigation.findNavController(view).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
+        Navigation.findNavController(view).navigate(R.id.action_addPolygonMapsFragment_to_navigation_polygons);
 
         Toast.makeText(getActivity(), "Polygon berhasil disimpan!", Toast.LENGTH_SHORT).show();
         dismiss();
