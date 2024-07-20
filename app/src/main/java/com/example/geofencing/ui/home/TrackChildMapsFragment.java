@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.R;
@@ -57,7 +58,7 @@ public class TrackChildMapsFragment extends Fragment {
             if (getArguments() != null) {
                 String childId = getArguments().getString("id");
                 String name = getArguments().getString("name");
-//                getChildLocation(childId, name);
+                getChildLocation(childId, name);
                 getAreas(childId);
 
             }
@@ -148,10 +149,7 @@ public class TrackChildMapsFragment extends Fragment {
 
     private void getChildLocation(String childId, String name) {
 
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        // Get data from db
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/childs/" + childId);
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + childId);
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -171,9 +169,8 @@ public class TrackChildMapsFragment extends Fragment {
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
                         mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
 
-                        Log.d(TAG, "Latitude: " + lat + ", Longitude: " + lng);
                     } else {
-                        Log.d(TAG, "Latitude or Longitude is null");
+                        Toast.makeText(getContext(), "Lokasi tidak ada!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.d(TAG, "Child does not exist");
