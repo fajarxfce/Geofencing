@@ -16,7 +16,6 @@ import androidx.navigation.Navigation;
 import com.example.geofencing.Config;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.DialogEnterAreaNameBinding;
-import com.example.geofencing.databinding.DialogEnterPairCodeBinding;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.maps.model.LatLng;
@@ -25,7 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
-import java.util.Random;
 
 public class EnterAreaNameDialog extends DialogFragment {
 
@@ -57,21 +55,21 @@ public class EnterAreaNameDialog extends DialogFragment {
     }
 
     private void saveArea(List<LatLng> points) {
-        String areaName = binding.txtAreaName.getText().toString().trim();
-        if (areaName.isEmpty()) {
-            binding.txtAreaName.setError("Area name is required");
+        String polygonName = binding.txtAreaName.getText().toString().trim();
+        if (polygonName.isEmpty()) {
+            binding.txtAreaName.setError("Polygon name is required");
             return;
         }
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
 
-        DBHelper.saveArea(DB, uid, areaName, points);
-        DBHelper.saveArea2(DB, uid, areaName, points);
+        DBHelper.savePolygonToParent(DB, uid, polygonName, points);
+        DBHelper.savePolygons(DB, polygonName, points);
 
         Navigation.findNavController(view).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
 
-        Toast.makeText(getActivity(), "Area saved", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Polygon berhasil disimpan!", Toast.LENGTH_SHORT).show();
         dismiss();
 
     }

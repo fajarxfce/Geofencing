@@ -28,4 +28,6 @@
     <string name="masukkan_pair_code">Masukkan pair code</string>
     <string name="masuk">Masuk</string>
     <string name="daftar">Daftar</string>
+    <string name="simpan">Simpan</string>
+    <string name="masukkan_nama_polygon">Masukkan Nama Polygon</string>
 </resources>

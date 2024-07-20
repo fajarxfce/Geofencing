@@ -193,31 +193,31 @@ public class DBHelper {
                 .removeValue();
     }
 
-    public static void saveArea(DatabaseReference DB, String parentId, String name, List<LatLng> points) {
+    public static void savePolygonToParent(DatabaseReference DB, String parentId, String name, List<LatLng> points) {
         for (int i = 0; i < points.size(); i++) {
             DB.child("users")
                     .child(parentId)
-                    .child("areas")
+                    .child("polygons")
                     .child(name)
                     .child(String.valueOf(i))
                     .setValue(points.get(i));
         }
     }
 
-    public static void saveArea2(DatabaseReference DB, String parentId, String name, List<LatLng> points) {
+    public static void savePolygons(DatabaseReference DB, String name, List<LatLng> points) {
         for (int i = 0; i < points.size(); i++) {
-            DB.child("areas")
+            DB.child("polygons")
                     .child(name)
                     .child(String.valueOf(i))
                     .setValue(points.get(i));
         }
     }
 
-    public static void deleteArea(DatabaseReference DB, String parentId, String id) {
+    public static void deletePolygonFromChild(DatabaseReference DB, String parentId, String childId) {
         DB.child("users")
                 .child(parentId)
-                .child("areas")
-                .child(id)
+                .child("polygons")
+                .child(childId)
                 .removeValue();
     }
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,7 @@ import com.example.geofencing.R;
 import com.example.geofencing.adapter.AreaAdapter;
 import com.example.geofencing.databinding.FragmentListAreaBinding;
 import com.example.geofencing.dialog.DeleteAreaDialog;
-import com.example.geofencing.model.Area;
+import com.example.geofencing.model.ChildPolygon;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +58,7 @@ public class ListAreaFragment extends Fragment {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // Get data from db
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/areas");
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/polygons");
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -67,28 +66,28 @@ public class ListAreaFragment extends Fragment {
                 if (!isAdded()){
                     return;
                 }
-                List<Area> areaList = new ArrayList<>();
+                List<ChildPolygon> polygonList = new ArrayList<>();
 
                 int i = 0;
                 for (DataSnapshot clidSnapshot: dataSnapshot.getChildren()) {
                     i++;
 
-                    areaList.add(new Area(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
+                    polygonList.add(new ChildPolygon(clidSnapshot.getKey(), clidSnapshot.child("name").getValue(String.class), clidSnapshot.getKey()));
                 }
 
-                AreaAdapter adapter = new AreaAdapter(areaList);
+                AreaAdapter adapter = new AreaAdapter(polygonList);
                 binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
                 binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
                     final Bundle bundle = new Bundle();
-                    bundle.putString("id", areaList.get(i1).getId());
-                    bundle.putString("area_name", areaList.get(i1).getName());
+                    bundle.putString("id", polygonList.get(i1).getId());
+                    bundle.putString("area_name", polygonList.get(i1).getName());
                     Navigation.findNavController(view).navigate(R.id.action_navigation_dashboard_to_detailMapFragment, bundle);
                 });
 
                 adapter.setOnItemLongClickListener((view, i12) -> {
-                    DeleteAreaDialog deleteAreaDialog = new DeleteAreaDialog(areaList.get(i12).getId(), areaList.get(i12).getName());
+                    DeleteAreaDialog deleteAreaDialog = new DeleteAreaDialog(polygonList.get(i12).getId(), polygonList.get(i12).getName());
                     deleteAreaDialog.show(getParentFragmentManager(), "delete_area");
                 });
             }

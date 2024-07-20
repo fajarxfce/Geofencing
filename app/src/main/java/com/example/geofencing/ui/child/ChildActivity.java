@@ -12,14 +12,10 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
@@ -27,11 +23,7 @@ import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityChildBinding;
 import com.example.geofencing.dialog.ChildCodeDialog;
 import com.example.geofencing.dialog.ChildInfo;
-import com.example.geofencing.model.ChildData;
-import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.services.LocationService;
-import com.example.geofencing.util.AccessToken;
-import com.example.geofencing.util.KmlUtil;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,7 +32,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -79,7 +70,7 @@ public class ChildActivity extends AppCompatActivity {
             mMap = googleMap;
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
             enableUserLocation();
-            getAreas(Auth.getUid());
+            getPolygons(Auth.getUid());
 
         }
     };
@@ -138,24 +129,23 @@ public class ChildActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "ChildCodeDialog");
     }
 
-    private void getAreas(String childId) {
-        DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
+    private void getPolygons(String childId) {
+        DatabaseReference polygonRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("polygons");
 
-        areasRef.addValueEventListener(new ValueEventListener() {
+        polygonRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                List<String> areas = new ArrayList<>();
+                List<String> polygonList = new ArrayList<>();
 
                 int i = 0;
-                for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     i++;
-                    String area = areaSnapshot.getValue(String.class);
-                    Log.d(TAG, "getAreas: " + area);
-                    areas.add(area);
+                    String value = snapshot.getValue(String.class);
+                    polygonList.add(value);
                 }
 
-                getPolygonData(areas);
+                getPolygonData(polygonList);
             }
 
             @Override
@@ -165,19 +155,19 @@ public class ChildActivity extends AppCompatActivity {
         });
     }
 
-    private void getPolygonData(List<String> areas) {
+    private void getPolygonData(List<String> polygonList) {
 
-        for (int i = 0; i < areas.size(); i++) {
-            String areaName = areas.get(i);
-            getLatLng(areaName);
+        for (int i = 0; i < polygonList.size(); i++) {
+            String polygonName = polygonList.get(i);
+            getLatLng(polygonName);
 
         }
 
     }
 
-    private void getLatLng(String areaName) {
+    private void getLatLng(String polygonName) {
 
-        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas").child(areaName);
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("polygons").child(polygonName);
 
         latLngRef.addValueEventListener(new ValueEventListener() {
             @Override

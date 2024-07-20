@@ -13,22 +13,16 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.Contstants;
 import com.example.geofencing.R;
-import com.example.geofencing.adapter.ChildLocationHistoryAdapter;
 import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.helper.StringHelper;
 import com.example.geofencing.model.ChildCoordinat;
-import com.example.geofencing.model.ChildLocationHistory;
 import com.example.geofencing.model.FcmToken;
-import com.example.geofencing.model.LocationHistory;
 import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.util.AccessToken;
-import com.example.geofencing.util.KmlUtil;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -47,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -63,11 +56,11 @@ public class LocationService extends Service {
 
     private LocationListener locationListener;
     private Boolean lastStatus = null;
-    List<List<LatLng>> polygons = new ArrayList<>();
-    List<String> areasName = new ArrayList<>();
+    List<List<LatLng>> polygonList = new ArrayList<>();
+    List<String> polygonNameList = new ArrayList<>();
 
     public interface LocationListener {
-        void onLocationChanged(boolean inside, String area);
+        void onLocationChanged(boolean inside, String name);
     }
 
     private void setLocationListener(LocationListener locationListener) {
@@ -80,7 +73,6 @@ public class LocationService extends Service {
             super.onLocationResult(locationResult);
 
             if (locationResult != null && locationResult.getLastLocation() != null) {
-                // Get the location
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
                 LatLng currentLocation = new LatLng(latitude, longitude);
@@ -88,96 +80,72 @@ public class LocationService extends Service {
                 saveLocationToFirebase(latitude, longitude);
 
                 boolean insideAnyPolygon = false;
-                String area = "";
-                for (int i = 0; i < polygons.size(); i++) {
-                    List<LatLng> polygon = polygons.get(i);
-                    area = areasName.get(i);
+                String polygonName = "";
+                for (int i = 0; i < polygonList.size(); i++) {
+                    List<LatLng> polygon = polygonList.get(i);
+                    polygonName = polygonNameList.get(i);
                     if (PolyUtil.containsLocation(currentLocation.latitude, currentLocation.longitude, polygon, true)) {
                         insideAnyPolygon = true;
                         break;
                     }
                 }
 
-                // Only call onLocationChanged if the status has changed
                 if (lastStatus == null || insideAnyPolygon != lastStatus) {
                     if (locationListener != null) {
-                        locationListener.onLocationChanged(insideAnyPolygon, area);
+                        locationListener.onLocationChanged(insideAnyPolygon, polygonName);
                     }
                     lastStatus = insideAnyPolygon;
                 }
-
-
-                // Do something with the location
-                // For example, send the location to a server
             }
 
         }
     };
 
-    private void getAreas(String childId) {
-        Log.d(TAG, "getAreas: "+childId);
-        // Get reference to the areas
-        DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
-        Log.d(TAG, "getAreas: called");
+    private void getPolygons(String childId) {
+        DatabaseReference polygonRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("polygons");
 
-        areasRef.addValueEventListener(new ValueEventListener() {
+        polygonRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                List<String> areas = new ArrayList<>();
+                List<String> polygonList = new ArrayList<>();
 
-                int i = 0;
-                for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
-                    i++;
-                    String area = areaSnapshot.getValue(String.class);
-                    Log.d(TAG, "onDataChange: "+area);
-                    areas.add(area);
-//                    break;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String value = snapshot.getValue(String.class);
+                    Log.d(TAG, "onDataChange: "+value);
+                    polygonList.add(value);
                 }
 
-                getPolygonData(areas);
+                getPolygonData(polygonList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
-                Log.d(TAG, "Database error: " + databaseError.getMessage());
+
             }
         });
     }
 
-    private void getPolygonData(List<String> areas) {
-        // Update your UI with the areas here
-//        String userId = sp.getPref("parent_id", this);
-
-        for (int i = 0; i < areas.size(); i++) {
-            String areaName = areas.get(i);
-
-            Log.d(TAG, "getPolygonData: " + areaName);
-
-            getLatLng(areaName);
+    private void getPolygonData(List<String> polygonList) {
+        for (int i = 0; i < polygonList.size(); i++) {
+            String polygon = polygonList.get(i);
+            getLatLng(polygon);
 
         }
 
     }
 
-    private void getLatLng(String areaName) {
-        // Get reference to the latitude and longitude
-        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas")
-                .child(areaName);
+    private void getLatLng(String polygonName) {
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("polygons")
+                .child(polygonName);
 
-
-        Log.d(TAG, "getLatLng: " + latLngRef.toString());
-        // Attach a ValueEventListener to read the data
         latLngRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 latLngList = new ArrayList<>();
 
-                int i = 0;
                 for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
-                    i++;
                     Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = latLngSnapshot.child("longitude").getValue(Double.class);
 
@@ -186,20 +154,16 @@ public class LocationService extends Service {
 
                 }
 
-                polygons.add(latLngList);
-                areasName.add(areaName);
+                polygonList.add(latLngList);
+                LocationService.this.polygonNameList.add(polygonName);
 
                 for (int j = 0; j < latLngList.size(); j++) {
-                    Log.d(TAG, "onDataChange: getLatLng " + areaName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
+                    Log.d(TAG, "onDataChange: getLatLng " + polygonName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
                 }
-
-//                drawPolygon(latLngList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
-                Log.d(TAG, "Database error: " + databaseError.getMessage());
             }
         });
     }
@@ -207,25 +171,18 @@ public class LocationService extends Service {
     private void getFcmToken() {
 
         DatabaseReference DB2 = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + Auth.getUid() + "/parent_fcm_token");
-        Log.d(TAG, "getFcmToken: "+DB2);
         DB2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 fcmTokenList.clear();
                 dataSnapshot.getChildren().forEach(dataSnapshot1 -> {
-                    Log.d(TAG, "fetchFcm: "+dataSnapshot1.getValue(String.class));
                     fcmTokenList.add(new FcmToken(dataSnapshot1.getValue(String.class)));
                 });
-
-                for (int i = 0; i < fcmTokenList.size(); i++) {
-                    Log.d(TAG, "fcmTokenList: "+fcmTokenList.get(i).getFcmToken());
-                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("Error", databaseError.getMessage());
             }
         });
     }
@@ -238,31 +195,25 @@ public class LocationService extends Service {
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
         Auth = FirebaseAuth.getInstance();
 
-
-        getAreas(Auth.getUid());
+        getPolygons(Auth.getUid());
         getFcmToken();
 
         setLocationListener(new LocationListener() {
             @Override
-            public void onLocationChanged(boolean inside, String area) {
+            public void onLocationChanged(boolean inside, String polygonName) {
 
-                // Membuat objek Date untuk mendapatkan waktu saat ini
+                //format date
                 Date now = new Date();
-
-                // Membuat objek SimpleDateFormat untuk mengubah format Date menjadi string
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                // Mengubah Date menjadi string dengan format yang telah ditentukan
                 String timestamp = formatter.format(now);
 
                 String accessToken = AccessToken.getAccessToken();
                 String name = StringHelper.usernameFromEmail(Auth.getCurrentUser().getEmail());
-                String parentFcmToken = sp.getPref("parent_fcm_token", getApplicationContext());
                 String body = "";
                 String title = "Location Service";
 
                 if (inside) {
-                    body = "[ " + timestamp + " ]" + " : Your child " + name + " is inside the polygon " + area;
+                    body = "[ " + timestamp + " ]" + " : Your child " + name + " is inside the polygon " + polygonName;
                 } else {
                     body = "[ " + timestamp + " ]" + " : Your child " + name + " is outside the polygon";
                 }
@@ -271,9 +222,9 @@ public class LocationService extends Service {
                     SendNotification sendNotification = new SendNotification(accessToken, fcmTokenList.get(i).getFcmToken(), title, body);
 
                     if (inside) {
-                        Log.d(TAG, "onLocationChanged test: " + name + " Inside the polygon " + area);
+                        Log.d(TAG, "onLocationChanged test: " + name + " Inside the polygon " + polygonName);
                         sendNotification.sendNotification();
-                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is inside the " + area);
+                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is inside the " + polygonName);
                     } else {
                         Log.d(TAG, "onLocationChanged test: " + name + " Outside the polygon ");
                         saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is outside the polygon");
@@ -296,9 +247,7 @@ public class LocationService extends Service {
     }
 
     private void saveLocationHistoryToFirebase(String message) {
-        Log.d(TAG, "saveLocationToFirebase: " + message);
         String pairCode = sp.getPref("pair_code", this);
-        String parentId = sp.getPref("parent_id", this);
 
         DBHelper.saveLocationHistory2(
                 DB,
@@ -360,7 +309,6 @@ public class LocationService extends Service {
             if (action != null) {
                 if (action.equals(Contstants.ACTION_START_LOCATION_SERVICE)) {
                     startLocationService();
-//                    startLocationHistoryService();
                 } else if (action.equals(Contstants.ACTION_STOP_LOCATION_SERVICE)) {
                     stopLocationService();
                 }

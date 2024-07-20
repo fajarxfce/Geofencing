@@ -68,11 +68,9 @@ public class ListChildPolygonFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String pairCode = getArguments().getString("id");
 
-        // Get data from db
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode + "/areas");
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + pairCode + "/polygons");
         DB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -86,11 +84,9 @@ public class ListChildPolygonFragment extends Fragment {
                 for (DataSnapshot clidSnapshot: dataSnapshot.getChildren()) {
                     i++;
 
-                    String area = clidSnapshot.getValue(String.class);
+                    String value = clidSnapshot.getValue(String.class);
                     String key = clidSnapshot.getKey();
-
-                    Log.d(TAG, "onDataChange: "+clidSnapshot.getKey());
-                    listChildPolygons.add(new ListChildPolygon(key, area));
+                    listChildPolygons.add(new ListChildPolygon(key, value));
 
                 }
 
@@ -99,8 +95,6 @@ public class ListChildPolygonFragment extends Fragment {
                 binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL));
                 binding.recyclerView.setAdapter(adapter);
                 adapter.setOnItemClickListener((view, i1) -> {
-                    Log.d(TAG, "onDataChange: "+listChildPolygons.get(i1).getName());
-
                     showDeleteConfirmationDialog(listChildPolygons.get(i1).getKey(), getArguments().getString("id"));
                 });
 
@@ -115,13 +109,12 @@ public class ListChildPolygonFragment extends Fragment {
 
     private void showDeleteConfirmationDialog(String key, String childId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Hapus Area");
-        builder.setMessage("Apakah Anda yakin ingin menghapus area ini?");
+        builder.setTitle("Hapus Polygon");
+        builder.setMessage("Apakah Anda yakin ingin menghapus polygon ini?");
 
         builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Log.d(TAG, "onClick: "+getArguments().getString("id"));
-                removeAreaFromChild(key, childId);
+                removePolygonFromChild(key, childId);
             }
         });
         builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
@@ -134,16 +127,16 @@ public class ListChildPolygonFragment extends Fragment {
         dialog.show();
     }
 
-    private  void removeAreaFromChild(String key, String childId){
-        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + childId + "/areas");
+    private  void removePolygonFromChild(String key, String childId){
+        DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs/" + childId + "/polygons");
 
         Log.d(TAG, "removeFromChild: "+key);
 
         DB.child(key).removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-                Toast.makeText(requireContext(), "Berhasil menghapus area", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Berhasil menghapus polygon", Toast.LENGTH_SHORT).show();
             }else {
-                Toast.makeText(requireContext(), "Gagal menghapus area", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Gagal menghapus polygon", Toast.LENGTH_SHORT).show();
             }
         });
     }

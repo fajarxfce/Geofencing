@@ -1,12 +1,12 @@
 package com.example.geofencing.model;
 
-public class Area {
+public class ChildPolygon {
     private String id;
 
     private String parentId;
     private String name;
 
-    public Area(String id, String parentId, String name) {
+    public ChildPolygon(String id, String parentId, String name) {
         this.id = id;
         this.parentId = parentId;
         this.name = name;

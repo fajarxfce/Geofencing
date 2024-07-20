@@ -30,7 +30,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,58 +58,50 @@ public class TrackChildMapsFragment extends Fragment {
                 String childId = getArguments().getString("id");
                 String name = getArguments().getString("name");
                 getChildLocation(childId, name);
-                getAreas(childId);
+                getPolygons(childId);
 
             }
 
         }
     };
 
-    private void getAreas(String childId) {
-        // Get reference to the areas
-        DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
+    private void getPolygons(String childId) {
+        DatabaseReference polygonRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("polygons");
 
-        // Attach a ValueEventListener to read the data
-        areasRef.addValueEventListener(new ValueEventListener() {
+        polygonRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Create a new List to hold the areas
-                List<String> areas = new ArrayList<>();
+                List<String> poligonList = new ArrayList<>();
 
-                // Iterate over the children of the dataSnapshot
-                for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
-                    // Get the area as a String and add it to the list
-                    String area = areaSnapshot.getValue(String.class);
-                    areas.add(area);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String polygonName = snapshot.getValue(String.class);
+                    poligonList.add(polygonName);
                 }
 
-                // Now you have a list of areas, you can use it as needed
-                // For example, you could pass it to a method that updates your UI
-                getPolygonData(areas);
+                getPolygonData(poligonList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
                 Log.d(TAG, "Database error: " + databaseError.getMessage());
             }
         });
     }
 
-    private void getPolygonData(List<String> areas) {
+    private void getPolygonData(List<String> polygonList) {
 
-        for (int i = 0; i < areas.size(); i++) {
-            String areaName = areas.get(i);
+        for (int i = 0; i < polygonList.size(); i++) {
+            String polygonName = polygonList.get(i);
 
-            getLatLng(areaName);
+            getLatLng(polygonName);
 
         }
 
     }
 
-    private void getLatLng(String areaName) {
+    private void getLatLng(String polygonName) {
         // Get reference to the latitude and longitude
-        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas").child(areaName);
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("polygons").child(polygonName);
 
         latLngRef.addValueEventListener(new ValueEventListener() {
             @Override

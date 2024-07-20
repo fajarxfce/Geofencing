@@ -74,7 +74,7 @@ public class DetailAreaFragment extends Fragment {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             // Get data from db
-            DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/areas/" + id);
+            DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users/" + uid + "/polygons/" + id);
 
             DB.addValueEventListener(new ValueEventListener() {
                 @Override

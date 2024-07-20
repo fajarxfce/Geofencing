@@ -8,14 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.geofencing.databinding.AreaAdapterBinding;
-import com.example.geofencing.model.Area;
+import com.example.geofencing.model.ChildPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.ViewHolder>{
 
-    List<Area> areaList = new ArrayList<>();
+    List<ChildPolygon> childPolygonList = new ArrayList<>();
     OnItemClickListener listener;
     OnItemLongClickListener longClickListener;
 
@@ -36,8 +36,8 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.ViewHolder>{
         this.longClickListener = longClickListener;
     }
 
-    public AreaAdapter(List<Area> childList) {
-        this.areaList = childList;
+    public AreaAdapter(List<ChildPolygon> childList) {
+        this.childPolygonList = childList;
     }
 
     @NonNull
@@ -49,8 +49,8 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull AreaAdapter.ViewHolder holder, int position) {
-        holder.binding.tvName.setText(areaList.get(position).getName());
-        holder.binding.tvId.setText(areaList.get(position).getId());
+        holder.binding.tvName.setText(childPolygonList.get(position).getName());
+        holder.binding.tvId.setText(childPolygonList.get(position).getId());
         holder.binding.getRoot().setOnClickListener(v -> listener.onItemClick(v, position));
         holder.binding.getRoot().setOnLongClickListener(v -> {
             longClickListener.onItemLongClick(v, position);
@@ -62,7 +62,7 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return areaList.size();
+        return childPolygonList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
