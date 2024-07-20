@@ -42,27 +42,30 @@ public class RegisterChildActivity extends AppCompatActivity {
             String email = binding.txtEmail.getText().toString();
             String password = binding.txtPassword.getText().toString();
 
-            Auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if(task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-
-                        } else {
-                            Toast.makeText(RegisterChildActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            signUp(email, password);
         });
 
+    }
+
+    private void signUp(String email, String password){
+        Auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if(task.isSuccessful()) {
+                        onAuthSuccess(task.getResult().getUser());
+
+                    } else {
+                        Toast.makeText(RegisterChildActivity.this, "Sign Up Failed",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void onAuthSuccess(FirebaseUser user) {
         String name = StringHelper.usernameFromEmail(user.getEmail());
 
-        Random rnd = new Random();
-        int number = rnd.nextInt(999999);
+        int pairCode = generatePairCode();
 
-        String pairkey = String.format("%06d", number);
+        String pairkey = String.format("%06d", pairCode);
         ChildPairCode userChild = new ChildPairCode(name, user.getEmail(), user.getUid());
 
         // Create User If Not Exist
@@ -74,10 +77,12 @@ public class RegisterChildActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT).show();
         Auth.signOut();
         finish();
+    }
 
-        // Move to Main Activity
-//        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-//        finish();
+    private int generatePairCode(){
+        Random rnd = new Random();
+        int number = rnd.nextInt(999999);
+        return number;
     }
 
     private boolean validateForm() {

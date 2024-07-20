@@ -47,7 +47,6 @@ import java.util.List;
 public class LocationService extends Service {
 
     private static final String TAG = "LocationService";
-    private static final org.apache.commons.logging.Log log = LogFactory.getLog(LocationService.class);
     SharedPreferencesUtil sp;
     private DatabaseReference DB, DB2;
     List<LatLng> latLngList;
@@ -67,6 +66,7 @@ public class LocationService extends Service {
         this.locationListener = locationListener;
     }
 
+    // method ini di eksekusi 2 detik sekali
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -213,9 +213,9 @@ public class LocationService extends Service {
                 String title = "Location Service";
 
                 if (inside) {
-                    body = "[ " + timestamp + " ]" + " : Your child " + name + " is inside the polygon " + polygonName;
+                    body = "[ " + timestamp + " ]" + " : Anak anda " + name + " berada di dalam " + polygonName;
                 } else {
-                    body = "[ " + timestamp + " ]" + " : Your child " + name + " is outside the polygon";
+                    body = "[ " + timestamp + " ]" + " : Anak anda " + name + " keluar dari area";
                 }
 
                 for (int i = 0; i < fcmTokenList.size(); i++) {
@@ -224,10 +224,10 @@ public class LocationService extends Service {
                     if (inside) {
                         Log.d(TAG, "onLocationChanged test: " + name + " Inside the polygon " + polygonName);
                         sendNotification.sendNotification();
-                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is inside the " + polygonName);
+                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Anak anda " + name + " berada di dalam " + polygonName);
                     } else {
                         Log.d(TAG, "onLocationChanged test: " + name + " Outside the polygon ");
-                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Your child " + name + " is outside the polygon");
+                        saveLocationHistoryToFirebase("[ " + timestamp + " ]" + " Anak anda " + name + " keluar dari area");
                         sendNotification.sendNotification();
                     }
                 }

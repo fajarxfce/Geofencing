@@ -1,4 +1,4 @@
-package com.example.geofencing;
+package com.example.geofencing.ui.parent;
 
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -7,16 +7,16 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.geofencing.Config;
+import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityMainBinding;
 import com.example.geofencing.helper.DBHelper;
-import com.example.geofencing.model.SendNotification;
 import com.example.geofencing.util.AccessToken;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         askNotificationPermission();
     }
 
+    // generate fcm token parent
+    //1
     private void logRegToken() {
         // [START log_reg_token]
         String user = FirebaseAuth.getInstance().getUid();

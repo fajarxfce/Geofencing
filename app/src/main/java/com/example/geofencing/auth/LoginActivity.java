@@ -10,21 +10,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.geofencing.ChildLoginActivity;
 import com.example.geofencing.Config;
-import com.example.geofencing.MainActivity;
+import com.example.geofencing.ui.parent.MainActivity;
 import com.example.geofencing.R;
 import com.example.geofencing.databinding.ActivityLoginBinding;
 import com.example.geofencing.dialog.EnterPairCodeDialog;
 import com.example.geofencing.dialog.ForgotPasswordDialog;
-import com.example.geofencing.ui.child.ChildActivity;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import com.example.geofencing.helper.DBHelper;
 import com.example.geofencing.helper.StringHelper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {

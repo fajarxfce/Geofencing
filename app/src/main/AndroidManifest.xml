@@ -20,7 +20,7 @@
             android:name=".auth.RegisterChildActivity"
             android:exported="false" />
         <activity
-            android:name=".ChildLoginActivity"
+            android:name=".auth.ChildLoginActivity"
             android:exported="false" />
         <activity
             android:name=".WelcomeActivity"
@@ -71,7 +71,7 @@
             android:exported="false"
             android:label="REGISTER" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.parent.MainActivity"
             android:exported="false"
             android:label="Home" />
 

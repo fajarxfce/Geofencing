@@ -2,17 +2,14 @@ package com.example.geofencing;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.geofencing.auth.ChildLoginActivity;
 import com.example.geofencing.auth.LoginActivity;
 import com.example.geofencing.databinding.ActivityWelcomeBinding;
 import com.example.geofencing.ui.child.ChildActivity;
+import com.example.geofencing.ui.parent.MainActivity;
 import com.example.geofencing.util.SharedPreferencesUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
