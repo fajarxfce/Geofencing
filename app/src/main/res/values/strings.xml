@@ -30,4 +30,8 @@
     <string name="daftar">Daftar</string>
     <string name="simpan">Simpan</string>
     <string name="masukkan_nama_polygon">Masukkan Nama Polygon</string>
+    <string name="polygon">Polygon</string>
+    <string name="anak">Anak</string>
+    <string name="akun">Akun</string>
+    <string name="masukkan_kode_pairing">Masukkan kode pairing</string>
 </resources>

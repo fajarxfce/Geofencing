@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_user"
         android:icon="@drawable/baseline_person_24"
-        android:title="@string/title_user" />
+        android:title="@string/akun" />
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/baseline_map_24"
-        android:title="@string/title_dashboard" />
+        android:icon="@drawable/baseline_format_list_bulleted_24"
+        android:title="@string/polygon" />
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_child" />
+        android:icon="@drawable/baseline_child_care_24"
+        android:title="@string/anak" />
 
 </menu>

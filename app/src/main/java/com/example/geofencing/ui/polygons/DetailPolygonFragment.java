@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.dashboard;
+package com.example.geofencing.ui.polygons;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,13 +19,12 @@ import android.widget.Toast;
 import com.example.geofencing.Config;
 import com.example.geofencing.R;
 import com.example.geofencing.bottomsheet.MyBottomSheetDialogFragment;
-import com.example.geofencing.databinding.FragmentDetailAreaBinding;
+import com.example.geofencing.databinding.FragmentDetailPolygonBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -33,16 +32,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailAreaFragment extends Fragment {
+public class DetailPolygonFragment extends Fragment {
 
     private static final String TAG = "DetailAreaFragment";
     private GoogleMap mMap;
-    FragmentDetailAreaBinding binding;
+    FragmentDetailPolygonBinding binding;
     private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private List<LatLng> points = new ArrayList<>();
@@ -55,15 +53,6 @@ public class DetailAreaFragment extends Fragment {
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public void onMapReady(GoogleMap googleMap) {
             DatabaseReference pointsRef = database.getReference("points");
@@ -127,9 +116,6 @@ public class DetailAreaFragment extends Fragment {
         }
         polygon.fillColor(R.color.purple_700);
         mMap.addPolygon(polygon);
-        for (int i = 0; i < points.size(); i++) {
-            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
-        }
     }
 
     private void enableUserLocation() {
@@ -174,7 +160,7 @@ public class DetailAreaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentDetailAreaBinding.inflate(inflater, container, false);
+        binding = FragmentDetailPolygonBinding.inflate(inflater, container, false);
 
 
 

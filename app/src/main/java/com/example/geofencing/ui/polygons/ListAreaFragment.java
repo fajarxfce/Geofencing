@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.dashboard;
+package com.example.geofencing.ui.polygons;
 
 import android.os.Bundle;
 import android.util.Log;

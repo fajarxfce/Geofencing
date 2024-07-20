@@ -8,13 +8,13 @@
     <fragment
         android:id="@+id/navigation_user"
         android:name="com.example.geofencing.ui.user.UserFragment"
-        android:label="@string/title_user"
+        android:label="@string/akun"
         tools:layout="@layout/fragment_user" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.geofencing.ui.dashboard.ListAreaFragment"
-        android:label="@string/title_dashboard"
+        android:name="com.example.geofencing.ui.polygons.ListAreaFragment"
+        android:label="@string/polygon"
         tools:layout="@layout/fragment_list_area">
         <action
             android:id="@+id/action_navigation_dashboard_to_addAreaFragment"
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_polygon_maps"
-        android:name="com.example.geofencing.ui.dashboard.PolygonMapsFragment"
+        android:name="com.example.geofencing.ui.polygons.PolygonMapsFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_polygon_maps">
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_detail_map"
-        android:name="com.example.geofencing.ui.dashboard.DetailAreaFragment"
+        android:name="com.example.geofencing.ui.polygons.DetailPolygonFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_polygon_maps">
         <action
@@ -45,7 +45,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.geofencing.ui.home.HomeFragment"
-        android:label="@string/title_child"
+        android:label="@string/anak"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_navigation_home_to_addChildFragment"
