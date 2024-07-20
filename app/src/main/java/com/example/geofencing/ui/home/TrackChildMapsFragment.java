@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,20 +46,18 @@ public class TrackChildMapsFragment extends Fragment {
     private GoogleMap mMap;
     private DatabaseReference DB;
     Marker marker;
+    List<LatLng> latLngList;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
-//            LatLng sydney = new LatLng(-34, 151);
-//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
             if (getArguments() != null) {
                 String childId = getArguments().getString("id");
                 String name = getArguments().getString("name");
-                getChildLocation(childId, name);
+//                getChildLocation(childId, name);
                 getAreas(childId);
 
             }
@@ -98,30 +97,25 @@ public class TrackChildMapsFragment extends Fragment {
     }
 
     private void getPolygonData(List<String> areas) {
-        // Update your UI with the areas here
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         for (int i = 0; i < areas.size(); i++) {
             String areaName = areas.get(i);
 
-            getLatLng(userId, areaName);
+            getLatLng(areaName);
 
         }
 
     }
 
-    private void getLatLng(String userId, String areaName) {
+    private void getLatLng(String areaName) {
         // Get reference to the latitude and longitude
-        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("users").child(userId).child("areas").child(areaName);
+        DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas").child(areaName);
 
-
-        Log.d(TAG, "getLatLng: "+latLngRef.toString());
-        // Attach a ValueEventListener to read the data
         latLngRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                List<LatLng> latLngList = new ArrayList<>();
+                latLngList = new ArrayList<>();
 
                 for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
                     Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
@@ -142,34 +136,13 @@ public class TrackChildMapsFragment extends Fragment {
         });
     }
 
-    private void drawPolygon(List<LatLng> points ){
-//        mMap.clear();
+    private void drawPolygon(List<LatLng> points) {
         PolygonOptions polygon = new PolygonOptions();
         for (LatLng point : points) {
-//            mMap.addMarker(new MarkerOptions().position(point));
             polygon.add(point);
         }
-        polygon.fillColor(R.color.purple_700);
-        mMap.addPolygon(polygon);
-        for (int i = 0; i < points.size(); i++) {
-            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
-        }
-    }
-
-    private void updateUIWithLatLng(List<LatLng> latLngList) {
-        // Update your UI with the LatLng list here
-    }
-
-
-
-
-    private void drawPolygon(LatLng point) {
-        mMap.clear();
-        PolygonOptions polygon = new PolygonOptions();
-        mMap.addMarker(new MarkerOptions().position(point));
-        polygon.add(point);
-
-        polygon.fillColor(R.color.purple_700);
+        polygon.fillColor(R.color.red_transparent);
+        polygon.strokeColor(Color.RED);
         mMap.addPolygon(polygon);
     }
 

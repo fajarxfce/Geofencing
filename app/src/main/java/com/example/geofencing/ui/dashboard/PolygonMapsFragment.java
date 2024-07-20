@@ -54,28 +54,14 @@ public class PolygonMapsFragment extends Fragment {
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private Location currentLocation;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    private DatabaseReference DB;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            DatabaseReference pointsRef = database.getReference("points");
             mMap = googleMap;
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
             mMap.setOnMapClickListener(latLng -> {
                 binding.fabDelete.setVisibility(View.VISIBLE);
                 binding.ibSave.setVisibility(View.VISIBLE);
@@ -96,21 +82,11 @@ public class PolygonMapsFragment extends Fragment {
             });
 
             binding.ibSave.setOnClickListener(v -> {
-//                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//                DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
-//
-//                DBHelper.saveArea(DB, uid, "area" + new Random().nextInt(9999), points);
-//
-//                Toast.makeText(getActivity(), "Area saved", Toast.LENGTH_SHORT).show();
-
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("points", (ArrayList<? extends Parcelable>) points);
                 EnterAreaNameDialog dialog = new EnterAreaNameDialog(v);
                 dialog.setArguments(bundle);
                 dialog.show(getParentFragmentManager(), "EnterAreaNameDialog");
-
-                // Move to List Area fragment
-
             });
 
             enableUserLocation();
@@ -124,51 +100,15 @@ public class PolygonMapsFragment extends Fragment {
             mMap.addMarker(new MarkerOptions().position(point));
             polygon.add(point);
         }
-        binding.squareFeet.setText("Area: " + SphericalUtil.computeArea(points));
         polygon.fillColor(R.color.purple_700);
         mMap.addPolygon(polygon);
-        for (int i = 0; i < points.size(); i++) {
-            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
-        }
-    }
 
-
-
-    private boolean isLocationServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) requireActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        if (activityManager != null) {
-            for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-                if (LocationService.class.getName().equals(service.service.getClassName())) {
-                    if (service.foreground) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private void startLocationService() {
-        if (!isLocationServiceRunning()) {
-            Intent intent = new Intent(getActivity(), LocationService.class);
-            intent.setAction(Contstants.ACTION_START_LOCATION_SERVICE);
-            requireActivity().startService(intent);
-            Toast.makeText(getContext(), "Location service started", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void stopLocationService() {
-        if (isLocationServiceRunning()) {
-            Intent intent = new Intent(getContext(), LocationService.class);
-            intent.setAction(Contstants.ACTION_STOP_LOCATION_SERVICE);
-            requireActivity().startService(intent);
-            Toast.makeText(getContext(), "Location service stopped", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void enableUserLocation() {
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            getLastLocation();
         } else {
             //Ask for permission
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -182,23 +122,13 @@ public class PolygonMapsFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //We have the permission
-                mMap.setMyLocationEnabled(true);
+                enableUserLocation();
+                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
             } else {
-                //We do not have the permission..
-
-            }
-        }
-
-        if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //We have the permission
-                Toast.makeText(getContext(), "You can add geofences...", Toast.LENGTH_SHORT).show();
-            } else {
-                //We do not have the permission..
-                Toast.makeText(getContext(), "Background location access is neccessary for geofences to trigger...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -209,6 +139,7 @@ public class PolygonMapsFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentPolygonMapsBinding.inflate(inflater, container, false);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return binding.getRoot();
     }
 
@@ -218,46 +149,21 @@ public class PolygonMapsFragment extends Fragment {
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        getLastLocation();
-
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
-
-        binding.btnStartLocationUpdate.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                        getActivity(),
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        Contstants.REQUEST_CODE_LOCATION_PERMISSION
-                );
-            }else {
-                startLocationService();
-            }
-        });
-
-        binding.btnStropLocationUpdate.setOnClickListener(v -> {
-            stopLocationService();
-        });
     }
 
     private void getLastLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
             Task<Location> task = fusedLocationProviderClient.getLastLocation();
             task.addOnSuccessListener(location -> {
                 if (location != null) {
                     currentLocation = location;
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
-                    Toast.makeText(getContext(), "Lat: " + location.getLatitude() + " Lng: " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
-
-//    @Override
-//    public void onMapLongClick(LatLng latLng) {
-//
-//    }
 }

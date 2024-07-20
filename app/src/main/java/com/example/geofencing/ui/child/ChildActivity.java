@@ -112,20 +112,6 @@ public class ChildActivity extends AppCompatActivity {
 
     }
 
-    private void checkFineLocationPermission() {
-        if (ContextCompat.checkSelfPermission(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    ChildActivity.this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    Contstants.REQUEST_CODE_LOCATION_PERMISSION
-            );
-        } else {
-            enableUserLocation();
-            getLastLocation();
-            startLocationService();
-        }
-    }
-
     private void getChildInfo() {
         DB.child("childs").child(Auth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override

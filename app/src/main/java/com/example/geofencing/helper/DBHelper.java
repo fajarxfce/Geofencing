@@ -64,19 +64,15 @@ public class DBHelper {
         Log.d(TAG, "saveLocationHistory: saved");
     }
 
-    public static void saveCurrentLocation(DatabaseReference DB, String pairCode, ChildCoordinat coordinat, String parentId) {
+    public static void saveCurrentLocation(DatabaseReference DB, String childId, ChildCoordinat coordinat) {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("latitude", coordinat.getLatitude());
         updates.put("longitude", coordinat.getLongitude());
 
-        DB.child("users")
-                .child(parentId)
-                .child("childs")
-                .child(pairCode)
+        DB.child("childs")
+                .child(childId)
                 .updateChildren(updates);
-        Log.d(TAG, "saveCurrentLocation: "+DB.child("childs").child(pairCode).toString());
-        Log.d(TAG, "saveCurrentLocation: "+coordinat.getLatitude()+" "+coordinat.getLongitude());
     }
 
     public static void saveParentToken(DatabaseReference DB, String parentId, String fcmToken) {
