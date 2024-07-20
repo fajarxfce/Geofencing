@@ -74,35 +74,12 @@ public class ChildActivity extends AppCompatActivity {
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-//            LatLng sydney = new LatLng(-34, 151);
-//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
             mMap = googleMap;
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-
-            KmlUtil kmlUtil = new KmlUtil();
-
-//            addPolygon(kmlUtil.parseKMLFile(R.raw.contoh, ChildActivity.this));
-
-
-//            String childId = sf.getPref("pair_code", ChildActivity.this);
             enableUserLocation();
-
             getAreas(Auth.getUid());
-
 
         }
     };
@@ -114,8 +91,42 @@ public class ChildActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        // Initialization Firebase Auth and Firebase Database
         Auth = FirebaseAuth.getInstance();
         DB = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference();
+
+        getChildInfo();
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(callback);
+        }
+
+        binding.fabInfo.setOnClickListener(v -> {
+            createInfoDialog();
+        });
+
+    }
+
+    private void checkFineLocationPermission() {
+        if (ContextCompat.checkSelfPermission(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    ChildActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    Contstants.REQUEST_CODE_LOCATION_PERMISSION
+            );
+        } else {
+            enableUserLocation();
+            getLastLocation();
+            startLocationService();
+        }
+    }
+
+    private void getChildInfo() {
         DB.child("childs").child(Auth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -134,38 +145,6 @@ public class ChildActivity extends AppCompatActivity {
 
             }
         });
-//        retrieveFcmToken();
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        binding.fabInfo.setOnClickListener(v -> {
-            createInfoDialog();
-        });
-        getLastLocation();
-
-        Log.d(TAG, "onCreate: "+AccessToken.getAccessToken());
-
-//        SendNotification sendNotification = new SendNotification(AccessToken.getAccessToken(), "fK4ryQCpS6O2AFit8GmVII:APA91bE4CFhHyCR_fC7LrTqXXsPiKDcfaFBhaWXHR8lzEZtFblTjexkpM2fV2D4FIOgv2Pxb_lhcQsHoKmXNqLeL7BgeL6h79XClICAIKj7D0zU31-iVcEE0Sb-rfF---nXUFAY_iCYx",
-//                "Location Service", "You are outside the polygon");
-//        sendNotification.sendNotification();
-
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(callback);
-        }
-
-        if (ContextCompat.checkSelfPermission(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    ChildActivity.this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    Contstants.REQUEST_CODE_LOCATION_PERMISSION
-            );
-        } else {
-            startLocationService();
-        }
-
-
-
     }
 
     private void createInfoDialog() {
@@ -174,7 +153,6 @@ public class ChildActivity extends AppCompatActivity {
     }
 
     private void getAreas(String childId) {
-        // Get reference to the areas
         DatabaseReference areasRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("childs").child(childId).child("areas");
 
         areasRef.addValueEventListener(new ValueEventListener() {
@@ -187,9 +165,8 @@ public class ChildActivity extends AppCompatActivity {
                 for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
                     i++;
                     String area = areaSnapshot.getValue(String.class);
-                    Log.d(TAG, "getAreas: "+area);
+                    Log.d(TAG, "getAreas: " + area);
                     areas.add(area);
-//                    break;
                 }
 
                 getPolygonData(areas);
@@ -197,43 +174,32 @@ public class ChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
                 Log.d(TAG, "Database error: " + databaseError.getMessage());
             }
         });
     }
 
     private void getPolygonData(List<String> areas) {
-        // Update your UI with the areas here
-        String userId = sf.getPref("parent_id", this);
 
         for (int i = 0; i < areas.size(); i++) {
             String areaName = areas.get(i);
-
-            Log.d(TAG, "getPolygonData: " + areaName);
-
-            getLatLng(userId, areaName);
+            getLatLng(areaName);
 
         }
 
     }
 
-    private void getLatLng(String userId, String areaName) {
-        // Get reference to the latitude and longitude
+    private void getLatLng(String areaName) {
+
         DatabaseReference latLngRef = FirebaseDatabase.getInstance(Config.getDB_URL()).getReference("areas").child(areaName);
 
-
-        Log.d(TAG, "getLatLng: " + latLngRef.toString());
-        // Attach a ValueEventListener to read the data
         latLngRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 latLngList = new ArrayList<>();
 
-                int i = 0;
                 for (DataSnapshot latLngSnapshot : dataSnapshot.getChildren()) {
-                    i++;
                     Double latitude = latLngSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = latLngSnapshot.child("longitude").getValue(Double.class);
 
@@ -241,35 +207,24 @@ public class ChildActivity extends AppCompatActivity {
                     latLngList.add(latLng);
 
                 }
-
-                for (int j = 0; j < latLngList.size(); j++) {
-                    Log.d(TAG, "onDataChange: getLatLng " + areaName + " " + latLngList.get(j).latitude + ", " + latLngList.get(j).longitude);
-                }
-
                 drawPolygon(latLngList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
-                Log.d(TAG, "Database error: " + databaseError.getMessage());
+
             }
         });
     }
 
-    private void drawPolygon(List<LatLng> points ){
-//        mMap.clear();
+    private void drawPolygon(List<LatLng> points) {
         PolygonOptions polygon = new PolygonOptions();
         for (LatLng point : points) {
-//            mMap.addMarker(new MarkerOptions().position(point));
             polygon.add(point);
         }
         polygon.fillColor(R.color.red_transparent);
         polygon.strokeColor(Color.RED);
         mMap.addPolygon(polygon);
-        for (int i = 0; i < points.size(); i++) {
-            Log.d(TAG, "drawPolygon: "+points.get(i).latitude + ", " + points.get(i).longitude);
-        }
     }
 
     private boolean isLocationServiceRunning() {
@@ -311,21 +266,10 @@ public class ChildActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //We have the permission
-                mMap.setMyLocationEnabled(true);
+                enableUserLocation();
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
             } else {
-                //We do not have the permission..
-
-            }
-        }
-
-        if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //We have the permission
-                Toast.makeText(ChildActivity.this, "You can add geofences...", Toast.LENGTH_SHORT).show();
-            } else {
-                //We do not have the permission..
-                Toast.makeText(ChildActivity.this, "Background location access is neccessary for geofences to trigger...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -333,6 +277,8 @@ public class ChildActivity extends AppCompatActivity {
     private void enableUserLocation() {
         if (ContextCompat.checkSelfPermission(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            getLastLocation();
+            startLocationService();
         } else {
             //Ask for permission
             if (ActivityCompat.shouldShowRequestPermissionRationale(ChildActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
