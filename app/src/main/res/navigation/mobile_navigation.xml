@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_polygons"
-        android:name="com.example.geofencing.ui.parent.polygons.ListAreaFragment"
+        android:name="com.example.geofencing.ui.parent.polygons.PolygonsFragment"
         android:label="@string/polygon"
-        tools:layout="@layout/fragment_list_area">
+        tools:layout="@layout/fragment_polygons">
         <action
             android:id="@+id/action_navigation_dashboard_to_detailMapFragment"
             app:destination="@id/navigation_detail_map" />
@@ -35,9 +35,9 @@
 
     <fragment
         android:id="@+id/navigation_childs"
-        android:name="com.example.geofencing.ui.parent.childs.HomeFragment"
+        android:name="com.example.geofencing.ui.parent.childs.ChildsFragment"
         android:label="@string/anak"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_childs" >
         <action
             android:id="@+id/action_navigation_home_to_addChildFragment"
             app:destination="@id/addChildFragment" />

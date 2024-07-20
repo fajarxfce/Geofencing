@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.Config;
 import com.example.geofencing.adapter.ChildAdapter;
-import com.example.geofencing.databinding.FragmentHomeBinding;
+import com.example.geofencing.databinding.FragmentChildsBinding;
 import com.example.geofencing.dialog.ChildOptionDialog;
 import com.example.geofencing.dialog.EnterChildPairCodeDialog;
 import com.example.geofencing.helper.StringHelper;
@@ -30,16 +30,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class ChildsFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
-    private FragmentHomeBinding binding;
+    private FragmentChildsBinding binding;
     private DatabaseReference DB;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentChildsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         setupRecyclerView();
         return root;

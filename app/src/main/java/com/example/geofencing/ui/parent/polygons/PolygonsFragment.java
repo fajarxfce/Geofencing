@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.geofencing.Config;
 import com.example.geofencing.R;
 import com.example.geofencing.adapter.AreaAdapter;
-import com.example.geofencing.databinding.FragmentListAreaBinding;
+import com.example.geofencing.databinding.FragmentPolygonsBinding;
 import com.example.geofencing.dialog.DeleteAreaDialog;
 import com.example.geofencing.model.ChildPolygon;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,15 +29,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAreaFragment extends Fragment {
+public class PolygonsFragment extends Fragment {
 
-    private FragmentListAreaBinding binding;
+    private FragmentPolygonsBinding binding;
     private DatabaseReference DB;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentListAreaBinding.inflate(inflater, container, false);
+        binding = FragmentPolygonsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         return root;
