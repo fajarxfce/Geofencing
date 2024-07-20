@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.user;
+package com.example.geofencing.ui.parent.user;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_user"
-        android:name="com.example.geofencing.ui.user.UserFragment"
+        android:name="com.example.geofencing.ui.parent.user.UserFragment"
         android:label="@string/akun"
         tools:layout="@layout/fragment_user" />
 
     <fragment
         android:id="@+id/navigation_polygons"
-        android:name="com.example.geofencing.ui.polygons.ListAreaFragment"
+        android:name="com.example.geofencing.ui.parent.polygons.ListAreaFragment"
         android:label="@string/polygon"
         tools:layout="@layout/fragment_list_area">
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_detail_map"
-        android:name="com.example.geofencing.ui.polygons.DetailPolygonFragment"
+        android:name="com.example.geofencing.ui.parent.polygons.DetailPolygonFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_add_polygon_maps">
         <action
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/navigation_childs"
-        android:name="com.example.geofencing.ui.home.HomeFragment"
+        android:name="com.example.geofencing.ui.parent.childs.HomeFragment"
         android:label="@string/anak"
         tools:layout="@layout/fragment_home" >
         <action
@@ -53,7 +53,7 @@
     </fragment>
     <fragment
         android:id="@+id/addChildFragment"
-        android:name="com.example.geofencing.ui.home.AddChildFragment"
+        android:name="com.example.geofencing.ui.parent.childs.AddChildFragment"
         android:label="@string/add_child"
         tools:layout="@layout/fragment_add_child" >
         <action
@@ -62,7 +62,7 @@
     </fragment>
     <fragment
         android:id="@+id/trackChildMapsFragment"
-        android:name="com.example.geofencing.ui.home.TrackChildMapsFragment"
+        android:name="com.example.geofencing.ui.parent.childs.TrackChildMapsFragment"
         android:label="fragment_track_child_maps"
         tools:layout="@layout/fragment_track_child_maps" >
         <action
@@ -71,17 +71,17 @@
     </fragment>
     <fragment
         android:id="@+id/childLocationHistoryFragment"
-        android:name="com.example.geofencing.ui.home.ChildLocationHistoryFragment"
+        android:name="com.example.geofencing.ui.parent.childs.ChildLocationHistoryFragment"
         android:label="Child Location History"
         tools:layout="@layout/fragment_child_location_history" />
     <fragment
         android:id="@+id/listChildPolygonFragment"
-        android:name="com.example.geofencing.ui.home.ListChildPolygonFragment"
+        android:name="com.example.geofencing.ui.parent.childs.ListChildPolygonFragment"
         android:label="List Child Polygon"
         tools:layout="@layout/fragment_list_child_polygon" />
     <fragment
         android:id="@+id/addPolygonMapsFragment"
-        android:name="com.example.geofencing.ui.polygons.addPolygonMapsFragment"
+        android:name="com.example.geofencing.ui.parent.polygons.addPolygonMapsFragment"
         android:label="Tambah Polygon"
         tools:layout="@layout/fragment_add_polygon_maps" >
         <action

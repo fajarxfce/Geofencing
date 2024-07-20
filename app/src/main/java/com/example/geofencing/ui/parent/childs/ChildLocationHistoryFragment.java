@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.home;
+package com.example.geofencing.ui.parent.childs;
 
 import android.os.Bundle;
 
@@ -14,12 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.geofencing.Config;
-import com.example.geofencing.R;
-import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.adapter.ChildLocationHistoryAdapter;
 import com.example.geofencing.databinding.FragmentChildLocationHistoryBinding;
-import com.example.geofencing.dialog.ChildOptionDialog;
-import com.example.geofencing.model.Child;
 import com.example.geofencing.model.ChildLocationHistory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

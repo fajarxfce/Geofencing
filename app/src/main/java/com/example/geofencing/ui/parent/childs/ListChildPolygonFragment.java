@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.home;
+package com.example.geofencing.ui.parent.childs;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -22,7 +22,6 @@ import com.example.geofencing.bottomsheet.AddPolygonBottomsheet;
 import com.example.geofencing.databinding.FragmentListChildPolygonBinding;
 import com.example.geofencing.model.ListChildPolygon;
 import com.example.geofencing.util.SharedPreferencesUtil;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

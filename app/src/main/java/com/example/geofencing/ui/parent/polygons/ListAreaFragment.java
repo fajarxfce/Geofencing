@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.polygons;
+package com.example.geofencing.ui.parent.polygons;
 
 import android.os.Bundle;
 import android.util.Log;

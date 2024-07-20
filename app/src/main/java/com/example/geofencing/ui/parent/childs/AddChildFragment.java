@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.home;
+package com.example.geofencing.ui.parent.childs;
 
 import android.os.Bundle;
 

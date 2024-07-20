@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.home;
+package com.example.geofencing.ui.parent.childs;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,20 +10,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.geofencing.Config;
-import com.example.geofencing.R;
 import com.example.geofencing.adapter.ChildAdapter;
 import com.example.geofencing.databinding.FragmentHomeBinding;
-import com.example.geofencing.dialog.ChildCodeDialog;
 import com.example.geofencing.dialog.ChildOptionDialog;
-import com.example.geofencing.dialog.DeleteChildDialog;
 import com.example.geofencing.dialog.EnterChildPairCodeDialog;
 import com.example.geofencing.helper.StringHelper;
-import com.example.geofencing.model.Child;
 import com.example.geofencing.model.ChildPairCode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

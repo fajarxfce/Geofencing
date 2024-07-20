@@ -1,4 +1,4 @@
-package com.example.geofencing.ui.home;
+package com.example.geofencing.ui.parent.childs;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
