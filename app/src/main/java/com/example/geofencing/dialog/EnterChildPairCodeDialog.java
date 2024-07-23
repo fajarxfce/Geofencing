@@ -71,7 +71,11 @@ public class EnterChildPairCodeDialog extends DialogFragment {
         String pairCode = binding.txtAreaName.getText().toString().trim();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (pairCode.isEmpty()) {
-            binding.txtAreaName.setError("Pair code is required");
+            binding.txtAreaName.setError("Kode pairing harus diisi!");
+            return;
+        }
+        if (pairCode.length() != 6) {
+            binding.txtAreaName.setError("Kode pairing harus 6 karakter!");
             return;
         }
 
