@@ -39,7 +39,7 @@ public class ChildOptionDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        String[] options = {"Lihat Lokasi Anak", "Lihat Riwayat Lokasi", "Polygon", "Hapus Anak"};
+        String[] options = {"Lihat Lokasi Anak", "Lihat Riwayat Lokasi", "Area", "Hapus Anak"};
 
         Bundle bundle = new Bundle();
         bundle.putString("id", this.id);

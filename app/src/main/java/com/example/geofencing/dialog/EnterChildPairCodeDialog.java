@@ -41,6 +41,7 @@ public class EnterChildPairCodeDialog extends DialogFragment {
     FirebaseAuth Auth;
     View view;
     private Context context;
+    private boolean isChildExist;
     public EnterChildPairCodeDialog(View view, Context context) {
         // Required empty public constructor
         this.view = view;
@@ -89,13 +90,16 @@ public class EnterChildPairCodeDialog extends DialogFragment {
 
                     ChildPairCode childPairCode = new ChildPairCode(username, email, childUid);
 
-                    DBHelper.saveChildToParent(DB, userId,pairCode, childPairCode);
                     DBHelper.saveParentToChild(DB, childUid, userId);
                     DBHelper.saveFcmTokenToChild(DB, childUid, Auth.getUid(), sf.getPref("parent_fcm_token", context));
 
+                    Toast.makeText(context, "Anak berhasil disimpan", Toast.LENGTH_SHORT).show();
+
+                    dismiss();
 
                 } else {
-                    binding.txtAreaName.setError("Pair code not found");
+                    dismiss();
+                    Toast.makeText(context, "Kode pairing tidak ditemukan!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -105,15 +109,31 @@ public class EnterChildPairCodeDialog extends DialogFragment {
             }
         });
 
-
-
-//        Navigation.findNavController(view).navigate(R.id.action_addAreaFragment_to_navigation_dashboard);
-
-        Toast.makeText(getActivity(), "Child saved", Toast.LENGTH_SHORT).show();
-        dismiss();
-
     }
 
+    private void checkIfPairCodeExist(String pairCode) {
+
+        DB.child("users")
+                .child(Auth.getUid())
+                .child("childs")
+                .child(pairCode)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    isChildExist = true;
+                }else {
+                    isChildExist = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

@@ -52,7 +52,7 @@ public class addPolygonMapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mMap.setOnMapClickListener(latLng -> {
                 binding.fabDelete.setVisibility(View.VISIBLE);
                 binding.ibSave.setVisibility(View.VISIBLE);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Geofencing</string>
+    <string name="app_name">Mona</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_child">Child</string>
@@ -34,4 +34,8 @@
     <string name="anak">Anak</string>
     <string name="akun">Akun</string>
     <string name="masukkan_kode_pairing">Masukkan kode pairing</string>
+    <string name="area">Area</string>
+    <string name="detail_area">Detail Area</string>
+    <string name="daftar_area_anak">Daftar Area Anak</string>
+    <string name="pilih_area">Pilih Area</string>
 </resources>

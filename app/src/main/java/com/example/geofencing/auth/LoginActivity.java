@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (task.isSuccessful()) {
                         onAuthSuccess(task.getResult().getUser());
                     } else {
-                        Toast.makeText(LoginActivity.this, "Sign In Failed",
+                        Toast.makeText(LoginActivity.this, "Email/Password Salah",
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        DBHelper.saveUser(DB, user.getUid(), name, user.getEmail());
 
         // Make alert
-        Toast.makeText(LoginActivity.this, "Sign In Success !",
+        Toast.makeText(LoginActivity.this, "Berhasil masuk !",
                 Toast.LENGTH_SHORT).show();
 
         // Move to Main Activity

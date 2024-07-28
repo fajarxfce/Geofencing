@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_polygons"
         android:icon="@drawable/baseline_format_list_bulleted_24"
-        android:title="@string/polygon" />
+        android:title="@string/area" />
 
     <item
         android:id="@+id/navigation_childs"

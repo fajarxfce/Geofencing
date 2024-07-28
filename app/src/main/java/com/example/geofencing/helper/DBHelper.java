@@ -86,12 +86,12 @@ public class DBHelper {
                 .push().setValue(fcmToken);
     }
 
-    public static void saveChildToParent(DatabaseReference DB, String parentId, String pairCode, ChildPairCode childPairCode){
+    public static void saveChildToParent(DatabaseReference DB, String parentId, String pairCode, ChildPairCode childPairCode, DatabaseReference.CompletionListener listener){
         DB.child("users")
                 .child(parentId)
                 .child("childs")
                 .child(pairCode)
-                .setValue(childPairCode);
+                .setValue(childPairCode, listener);
     }
 
     public static void saveParentToChild(DatabaseReference DB, String childId, String parentId){

@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/navigation_polygons"
         android:name="com.example.geofencing.ui.parent.polygons.PolygonsFragment"
-        android:label="@string/polygon"
+        android:label="@string/area"
         tools:layout="@layout/fragment_polygons">
         <action
             android:id="@+id/action_navigation_dashboard_to_detailMapFragment"
@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/navigation_detail_map"
         android:name="com.example.geofencing.ui.parent.polygons.DetailPolygonFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/detail_area"
         tools:layout="@layout/fragment_add_polygon_maps">
         <action
             android:id="@+id/action_DetailAreaFragment_to_navigation_dashboard"
@@ -63,7 +63,7 @@
     <fragment
         android:id="@+id/trackChildMapsFragment"
         android:name="com.example.geofencing.ui.parent.childs.TrackChildMapsFragment"
-        android:label="fragment_track_child_maps"
+        android:label="Lokasi Anak"
         tools:layout="@layout/fragment_track_child_maps" >
         <action
             android:id="@+id/action_trackChildMapsFragment_to_navigation_home"
@@ -77,12 +77,12 @@
     <fragment
         android:id="@+id/listChildPolygonFragment"
         android:name="com.example.geofencing.ui.parent.childs.ListChildPolygonFragment"
-        android:label="List Child Polygon"
+        android:label="@string/daftar_area_anak"
         tools:layout="@layout/fragment_list_child_polygon" />
     <fragment
         android:id="@+id/addPolygonMapsFragment"
         android:name="com.example.geofencing.ui.parent.polygons.addPolygonMapsFragment"
-        android:label="Tambah Polygon"
+        android:label="Tambah Area"
         tools:layout="@layout/fragment_add_polygon_maps" >
         <action
             android:id="@+id/action_addPolygonMapsFragment_to_navigation_polygons"
