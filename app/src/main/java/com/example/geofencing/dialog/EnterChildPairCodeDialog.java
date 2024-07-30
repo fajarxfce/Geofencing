@@ -89,11 +89,14 @@ public class EnterChildPairCodeDialog extends DialogFragment {
                     String username = snapshot.child("username").getValue(String.class);
 
                     ChildPairCode childPairCode = new ChildPairCode(username, email, childUid);
-
+                    DBHelper.saveChildToParent(DB, userId, pairCode, childPairCode, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                            Toast.makeText(context, "Anak berhasil disimpan", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     DBHelper.saveParentToChild(DB, childUid, userId);
                     DBHelper.saveFcmTokenToChild(DB, childUid, Auth.getUid(), sf.getPref("parent_fcm_token", context));
-
-                    Toast.makeText(context, "Anak berhasil disimpan", Toast.LENGTH_SHORT).show();
 
                     dismiss();
 
